@@ -1,6 +1,8 @@
 #include "Game.h"
 #include "Vertex.h"
 #include "Input.h"
+#include "Mesh.h"
+#include <memory>
 
 // Needed for a helper function to read compiled shader files from the hard drive
 #pragma comment(lib, "d3dcompiler.lib")
@@ -174,50 +176,56 @@ void Game::CreateBasicGeometry()
 	//    in the correct order and each one will be used exactly once
 	// - But just to see how it's done...
 	unsigned int indices[] = { 0, 1, 2 };
+	
+	triangle = std::make_shared<Mesh>(vertices, sizeof(vertices), indices, sizeof(indices), device, context);
 
-
+#pragma region vertexAndIndexBufferCodeold
 	// Create the VERTEX BUFFER description -----------------------------------
 	// - The description is created on the stack because we only need
 	//    it to create the buffer.  The description is then useless.
-	D3D11_BUFFER_DESC vbd = {};
-	vbd.Usage = D3D11_USAGE_IMMUTABLE;
-	vbd.ByteWidth = sizeof(Vertex) * 3;       // 3 = number of vertices in the buffer
-	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER; // Tells DirectX this is a vertex buffer
-	vbd.CPUAccessFlags = 0;
-	vbd.MiscFlags = 0;
-	vbd.StructureByteStride = 0;
-
-	// Create the proper struct to hold the initial vertex data
-	// - This is how we put the initial data into the buffer
-	D3D11_SUBRESOURCE_DATA initialVertexData = {};
-	initialVertexData.pSysMem = vertices;
-
-	// Actually create the buffer with the initial data
-	// - Once we do this, we'll NEVER CHANGE THE BUFFER AGAIN
-	device->CreateBuffer(&vbd, &initialVertexData, vertexBuffer.GetAddressOf());
 
 
 
-	// Create the INDEX BUFFER description ------------------------------------
-	// - The description is created on the stack because we only need
-	//    it to create the buffer.  The description is then useless.
-	D3D11_BUFFER_DESC ibd = {};
-	ibd.Usage = D3D11_USAGE_IMMUTABLE;
-	ibd.ByteWidth = sizeof(unsigned int) * 3;	// 3 = number of indices in the buffer
-	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;	// Tells DirectX this is an index buffer
-	ibd.CPUAccessFlags = 0;
-	ibd.MiscFlags = 0;
-	ibd.StructureByteStride = 0;
 
-	// Create the proper struct to hold the initial index data
-	// - This is how we put the initial data into the buffer
-	D3D11_SUBRESOURCE_DATA initialIndexData = {};
-	initialIndexData.pSysMem = indices;
+	//D3D11_BUFFER_DESC vbd = {};
+	//vbd.Usage = D3D11_USAGE_IMMUTABLE;
+	//vbd.ByteWidth = sizeof(Vertex) * 3;       // 3 = number of vertices in the buffer
+	//vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER; // Tells DirectX this is a vertex buffer
+	//vbd.CPUAccessFlags = 0;
+	//vbd.MiscFlags = 0;
+	//vbd.StructureByteStride = 0;
 
-	// Actually create the buffer with the initial data
-	// - Once we do this, we'll NEVER CHANGE THE BUFFER AGAIN
-	device->CreateBuffer(&ibd, &initialIndexData, indexBuffer.GetAddressOf());
+	//// Create the proper struct to hold the initial vertex data
+	//// - This is how we put the initial data into the buffer
+	//D3D11_SUBRESOURCE_DATA initialVertexData = {};
+	//initialVertexData.pSysMem = vertices;
 
+	//// Actually create the buffer with the initial data
+	//// - Once we do this, we'll NEVER CHANGE THE BUFFER AGAIN
+	//device->CreateBuffer(&vbd, &initialVertexData, vertexBuffer.GetAddressOf());
+
+
+
+	//// Create the INDEX BUFFER description ------------------------------------
+	//// - The description is created on the stack because we only need
+	////    it to create the buffer.  The description is then useless.
+	//D3D11_BUFFER_DESC ibd = {};
+	//ibd.Usage = D3D11_USAGE_IMMUTABLE;
+	//ibd.ByteWidth = sizeof(unsigned int) * 3;	// 3 = number of indices in the buffer
+	//ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;	// Tells DirectX this is an index buffer
+	//ibd.CPUAccessFlags = 0;
+	//ibd.MiscFlags = 0;
+	//ibd.StructureByteStride = 0;
+
+	//// Create the proper struct to hold the initial index data
+	//// - This is how we put the initial data into the buffer
+	//D3D11_SUBRESOURCE_DATA initialIndexData = {};
+	//initialIndexData.pSysMem = indices;
+
+	//// Actually create the buffer with the initial data
+	//// - Once we do this, we'll NEVER CHANGE THE BUFFER AGAIN
+	//device->CreateBuffer(&ibd, &initialIndexData, indexBuffer.GetAddressOf());
+#pragma endregion
 }
 
 
@@ -258,7 +266,7 @@ void Game::Draw(float deltaTime, float totalTime)
 		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
 		1.0f,
 		0);
-
+	
 
 	// Set the vertex and pixel shaders to use for the next Draw() command
 	//  - These don't technically need to be set every frame
@@ -282,10 +290,10 @@ void Game::Draw(float deltaTime, float totalTime)
 	//  - for this demo, this step *could* simply be done once during Init(),
 	//    but I'm doing it here because it's often done multiple times per frame
 	//    in a larger application/game
-	UINT stride = sizeof(Vertex);
+	/*UINT stride = sizeof(Vertex);
 	UINT offset = 0;
 	context->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
-	context->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	context->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);*/
 
 
 	// Finally do the actual drawing
@@ -293,12 +301,12 @@ void Game::Draw(float deltaTime, float totalTime)
 	//  - This will use all of the currently set DirectX "stuff" (shaders, buffers, etc)
 	//  - DrawIndexed() uses the currently set INDEX BUFFER to look up corresponding
 	//     vertices in the currently set VERTEX BUFFER
-	context->DrawIndexed(
-		3,     // The number of indices to use (we could draw a subset if we wanted)
-		0,     // Offset to the first index we want to use
-		0);    // Offset to add to each index when looking up vertices
+	//context->DrawIndexed(
+	//	3,     // The number of indices to use (we could draw a subset if we wanted)
+	//	0,     // Offset to the first index we want to use
+	//	0);    // Offset to add to each index when looking up vertices
 
-
+	triangle->Draw();
 
 	// Present the back buffer to the user
 	//  - Puts the final frame we're drawing into the window so the user can see it
