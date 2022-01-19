@@ -46,7 +46,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> inputLayout;
 
 	std::shared_ptr<Mesh> triangle;
-	//std::shared_ptr<Mesh> square;
-	//std::shared_ptr<Mesh> pentagon;
+	std::shared_ptr<Mesh> rect;
+	std::shared_ptr<Mesh> pentagon;
 };
 

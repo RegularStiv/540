@@ -1,6 +1,6 @@
 #include "Mesh.h"
 
-Mesh::Mesh(Vertex* vertexArray, int vertexNum, unsigned int* indices, int indiceNum, Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> deviceContext)
+Mesh::Mesh(Vertex* vertexArray, int vertexNum, unsigned int* indices, int indiceNum, Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context)
 {
 	indiceNumber = indiceNum;
 	
@@ -31,6 +31,8 @@ Mesh::Mesh(Vertex* vertexArray, int vertexNum, unsigned int* indices, int indice
 	initialIndexData.pSysMem = indices;
 
 	device->CreateBuffer(&ibd, &initialIndexData, indexBuffer.GetAddressOf());
+
+	deviceContext = context;
 }
 
 Mesh::~Mesh()
