@@ -177,7 +177,7 @@ void Game::CreateBasicGeometry()
 	// - But just to see how it's done...
 	unsigned int indices[] = { 0, 1, 2 };
 	
-	triangle = std::make_shared<Mesh>(vertices, sizeof(vertices), indices, sizeof(indices), device, context);
+	triangle = std::make_shared<Mesh>(vertices, ARRAYSIZE(vertices), indices, sizeof(indices), device, context);
 	Vertex rectVertices[] =
 	{
 		{ XMFLOAT3(+0.25f, +0.75f, +0.0f), red },
@@ -186,18 +186,18 @@ void Game::CreateBasicGeometry()
 		{ XMFLOAT3(+0.5f, -0.25f, +0.0f), red }
 	};
 	unsigned int rectIndices[] = { 0, 1, 2, 2, 1, 3 };
-	rect = std::make_shared<Mesh>(rectVertices, sizeof(rectVertices), rectIndices, sizeof(rectIndices), device, context);
+	rect = std::make_shared<Mesh>(rectVertices, ARRAYSIZE(rectVertices), rectIndices, sizeof(rectIndices), device, context);
 
 	Vertex pentaVertices[] =
 	{
 		{ XMFLOAT3(-0.5f, +0.75f, +0.0f), red },
 		{ XMFLOAT3(-0.25f, +0.75f, +0.0f), blue },
 		{ XMFLOAT3(-0.5f, -0.25f, +0.0f), green },
-		{ XMFLOAT3(-0.25f, -0.25f, +0.0f), red },
+		{ XMFLOAT3(-0.25f, 0.25f, +0.0f), red },
 		{ XMFLOAT3(-0.75f, +0.25f, +0.0f), blue }
 	};
 	unsigned int pentaIndices[] = { 0, 1, 2, 2, 1, 3, 2, 4, 0 };
-	pentagon = std::make_shared<Mesh>(pentaVertices, sizeof(pentaVertices), pentaIndices, sizeof(pentaIndices), device, context);
+	pentagon = std::make_shared<Mesh>(pentaVertices, ARRAYSIZE(pentaVertices), pentaIndices, sizeof(pentaIndices), device, context);
 }
 
 
