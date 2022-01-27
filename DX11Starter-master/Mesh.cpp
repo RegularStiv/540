@@ -1,6 +1,6 @@
 #include "Mesh.h"
 
-Mesh::Mesh(Vertex* vertexArray, int vertexNum, unsigned int* indices, int indiceNum, Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context)
+Mesh::Mesh(Vertex* vertexArray, unsigned long long vertexNum, unsigned int* indices, unsigned long long indiceNum, Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context)
 {
 	indiceNumber = indiceNum;
 	
