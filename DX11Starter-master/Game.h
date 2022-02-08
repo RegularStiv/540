@@ -52,5 +52,6 @@ private:
 	std::shared_ptr<Mesh> pentagon;
 	std::vector<GameEntity> entities;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBufferVS;
+	Transform transform;
 };
 

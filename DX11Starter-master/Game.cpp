@@ -26,7 +26,8 @@ Game::Game(HINSTANCE hInstance)
 		1280,			   // Width of the window's client area
 		720,			   // Height of the window's client area
 		true),			   // Show extra stats (fps) in title bar?
-	vsync(false)
+	vsync(false),
+	transform()
 {
 #if defined(DEBUG) || defined(_DEBUG)
 	// Do we want a console window?  Probably only in debug mode
@@ -54,6 +55,7 @@ Game::~Game()
 // --------------------------------------------------------
 void Game::Init()
 {
+	entities = {};
 	// Helper methods for loading shaders, creating some basic
 	// geometry to draw and some simple camera matrices.
 	//  - You'll be expanding and/or replacing these later
@@ -76,7 +78,7 @@ void Game::Init()
 	cbDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;  
 	cbDesc.Usage    = D3D11_USAGE_DYNAMIC;
 
-	entities = {};
+	
 	device->CreateBuffer(&cbDesc, 0, constantBufferVS.GetAddressOf());
 
 }
@@ -212,8 +214,8 @@ void Game::CreateBasicGeometry()
 	};
 	unsigned int pentaIndices[] = { 0, 1, 2, 2, 1, 3, 2, 4, 0 };
 	pentagon = std::make_shared<Mesh>(pentaVertices, ARRAYSIZE(pentaVertices), pentaIndices, ARRAYSIZE(pentaIndices), device, context);
-
-	entities[0] = GameEntity(triangle);
+	GameEntity one = GameEntity(triangle);
+	entities.push_back(one);
 	
 }
 
@@ -236,6 +238,13 @@ void Game::Update(float deltaTime, float totalTime)
 	// Example input checking: Quit if the escape key is pressed
 	if (Input::GetInstance().KeyDown(VK_ESCAPE))
 		Quit();
+	for (int i = 0; i < entities.size(); i++)
+	{
+		entities[i].GetTransform()->SetPosition(0, 0, 0);
+		entities[i].GetTransform()->SetRotation(DirectX::XMFLOAT4(0,0,0,0));
+		entities[i].GetTransform()->SetScale(1,1,1);
+		entities[i].GetTransform()->UpdateMatricies();
+	}
 }
 
 // --------------------------------------------------------

@@ -2,11 +2,11 @@
 
 Transform::Transform()
 {
-    worldMatrix = DirectX::XMFLOAT4X4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-    worldInverseTranspose = DirectX::XMFLOAT4X4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-    position = DirectX::XMFLOAT3(0,0,0);
-    scale = DirectX::XMFLOAT3(1, 1, 1);
-    rotation = DirectX::XMFLOAT4(0,0,0,0);
+    this->worldMatrix = DirectX::XMFLOAT4X4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+    this->worldInverseTranspose = DirectX::XMFLOAT4X4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+    this->position = DirectX::XMFLOAT3(0, 0, 0);
+    this->scale = DirectX::XMFLOAT3(1, 1, 1);
+    this->rotation = DirectX::XMFLOAT4(0,0,0,0);
 }
 
 Transform::Transform(DirectX::XMFLOAT4X4 world, DirectX::XMFLOAT4X4 worldInverseTranspose, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 scale, DirectX::XMFLOAT4 rotaion)
@@ -23,6 +23,13 @@ void Transform::SetPosition(float x, float y, float z)
     position = DirectX::XMFLOAT3(x, y, z);
 }
 
+void Transform::SetPosition(DirectX::XMFLOAT3 xyz)
+{
+    position.x = xyz.x;
+    position.y = xyz.y;
+    position.z = xyz.z;
+}
+
 void Transform::SetRotation(float pitch, float yaw, float roll)
 {
     DirectX::XMVECTOR quat = DirectX::XMQuaternionRotationRollPitchYaw(pitch, yaw, roll);
@@ -37,6 +44,11 @@ void Transform::SetRotation(DirectX::XMFLOAT4 quaternion)
 void Transform::SetScale(float x, float y, float z)
 {
     scale = DirectX::XMFLOAT3(x, y, z);
+}
+
+void Transform::SetScale(DirectX::XMFLOAT3 xyz)
+{
+    scale = xyz;
 }
 
 DirectX::XMFLOAT3 Transform::GetPosition()
