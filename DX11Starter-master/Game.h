@@ -50,7 +50,7 @@ private:
 	std::shared_ptr<Mesh> triangle;
 	std::shared_ptr<Mesh> rect;
 	std::shared_ptr<Mesh> pentagon;
-	std::vector<GameEntity> entities;
+	std::vector<std::shared_ptr<GameEntity>> entities;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBufferVS;
 	Transform transform;
 };
