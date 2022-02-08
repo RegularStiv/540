@@ -69,11 +69,13 @@ DirectX::XMFLOAT3 Transform::GetScale()
 
 DirectX::XMFLOAT4X4 Transform::GetWorldMatrix()
 {
+    UpdateMatricies();
     return worldMatrix;
 }
 
 DirectX::XMFLOAT4X4 Transform::GetWorldInverseTransposeMatrix()
 {
+    UpdateMatricies();
     return worldInverseTranspose;
 }
 

@@ -10,7 +10,7 @@ std::shared_ptr<Mesh> GameEntity::GetMesh()
 	return mesh;
 }
 
-Transform* GameEntity::GetTransform()
+Transform GameEntity::GetTransform()
 {
 	return transform;
 }
@@ -33,7 +33,7 @@ void GameEntity::Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> deviceContext,
 
 	VertexShaderExternalData vsData;
 	vsData.colorTint = DirectX::XMFLOAT4(1.0f, 0.5f, 0.5f, 1.0f);
-	vsData.worldMatrix = transform->GetWorldMatrix();
+	vsData.worldMatrix = transform.GetWorldMatrix();
 
 	D3D11_MAPPED_SUBRESOURCE mappedBuffer = {};
 	deviceContext->Map(constBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedBuffer);

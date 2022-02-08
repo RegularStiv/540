@@ -78,7 +78,6 @@ void Game::Init()
 	cbDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;  
 	cbDesc.Usage    = D3D11_USAGE_DYNAMIC;
 
-	
 	device->CreateBuffer(&cbDesc, 0, constantBufferVS.GetAddressOf());
 
 }
@@ -214,9 +213,16 @@ void Game::CreateBasicGeometry()
 	};
 	unsigned int pentaIndices[] = { 0, 1, 2, 2, 1, 3, 2, 4, 0 };
 	pentagon = std::make_shared<Mesh>(pentaVertices, ARRAYSIZE(pentaVertices), pentaIndices, ARRAYSIZE(pentaIndices), device, context);
-	GameEntity one = GameEntity(triangle);
+	std::shared_ptr<GameEntity> one = std::make_shared<GameEntity>(triangle);
 	entities.push_back(one);
-	
+	GameEntity two = GameEntity(triangle);
+	entities.push_back(two);
+	GameEntity three = GameEntity(rect);
+	entities.push_back(three);
+	GameEntity four = GameEntity(pentagon);
+	entities.push_back(four);
+	GameEntity five = GameEntity(triangle);
+	entities.push_back(five);
 }
 
 
@@ -238,13 +244,16 @@ void Game::Update(float deltaTime, float totalTime)
 	// Example input checking: Quit if the escape key is pressed
 	if (Input::GetInstance().KeyDown(VK_ESCAPE))
 		Quit();
-	for (int i = 0; i < entities.size(); i++)
+	for (int i = 0; i < entities.size() - 1; i++)
 	{
-		entities[i].GetTransform()->SetPosition(0, 0, 0);
-		entities[i].GetTransform()->SetRotation(DirectX::XMFLOAT4(0,0,0,0));
-		entities[i].GetTransform()->SetScale(1,1,1);
-		entities[i].GetTransform()->UpdateMatricies();
+		entities[i].GetTransform().SetPosition(0, 0, 0);
+		entities[i].GetTransform().SetRotation(DirectX::XMFLOAT4(0,0,0,0));
+		entities[i].GetTransform().SetScale(1,1,1);
+		//entities[i].GetTransform()->UpdateMatricies();
 	}
+	entities[2].GetTransform().SetPosition(sin(totalTime), 0, 0);
+	entities[2].GetTransform().Rotate(10,0,0);
+	entities[2].GetTransform().SetScale(1, 1, 1);
 }
 
 // --------------------------------------------------------
@@ -267,8 +276,10 @@ void Game::Draw(float deltaTime, float totalTime)
 
 
 	//insert meshes
-	entities[0].Draw(context,constantBufferVS,depthStencilView,vertexShader,pixelShader,inputLayout);
-
+	for (int i = 0; i < entities.size(); i++)
+	{
+		entities[i].Draw(context, constantBufferVS, depthStencilView, vertexShader, pixelShader, inputLayout);
+	}
 
 	// Present the back buffer to the user
 	//  - Puts the final frame we're drawing into the window so the user can see it
