@@ -6,6 +6,7 @@
 #include <vector>
 #include "Mesh.h"
 #include "BufferStructs.h"
+#include "GameEntity.h"
 #include <wrl/client.h> // Used for ComPtr - a smart pointer for COM objects
 
 class Game 
@@ -49,6 +50,7 @@ private:
 	std::shared_ptr<Mesh> triangle;
 	std::shared_ptr<Mesh> rect;
 	std::shared_ptr<Mesh> pentagon;
+	std::vector<GameEntity> entities;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBufferVS;
 };
 

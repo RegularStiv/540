@@ -46,7 +46,6 @@ Game::~Game()
 	// we don't need to explicitly clean up those DirectX objects
 	// - If we weren't using smart pointers, we'd need
 	//   to call Release() on each DirectX object created in Game
-
 }
 
 // --------------------------------------------------------
@@ -77,6 +76,7 @@ void Game::Init()
 	cbDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;  
 	cbDesc.Usage    = D3D11_USAGE_DYNAMIC;
 
+	entities = {};
 	device->CreateBuffer(&cbDesc, 0, constantBufferVS.GetAddressOf());
 
 }
@@ -190,7 +190,7 @@ void Game::CreateBasicGeometry()
 	//    in the correct order and each one will be used exactly once
 	// - But just to see how it's done...
 	unsigned int indices[] = { 0, 1, 2 };
-	
+
 	triangle = std::make_shared<Mesh>(vertices, ARRAYSIZE(vertices), indices, ARRAYSIZE(indices), device, context);
 	Vertex rectVertices[] =
 	{
@@ -212,6 +212,9 @@ void Game::CreateBasicGeometry()
 	};
 	unsigned int pentaIndices[] = { 0, 1, 2, 2, 1, 3, 2, 4, 0 };
 	pentagon = std::make_shared<Mesh>(pentaVertices, ARRAYSIZE(pentaVertices), pentaIndices, ARRAYSIZE(pentaIndices), device, context);
+
+	entities[0] = GameEntity(triangle);
+	
 }
 
 
@@ -252,39 +255,12 @@ void Game::Draw(float deltaTime, float totalTime)
 		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
 		1.0f,
 		0);
-	
-
-	// Set the vertex and pixel shaders to use for the next Draw() command
-	//  - These don't technically need to be set every frame
-	//  - Once you start applying different shaders to different objects,
-	//    you'll need to swap the current shaders before each draw
-	context->VSSetShader(vertexShader.Get(), 0, 0);
-	context->PSSetShader(pixelShader.Get(), 0, 0);
 
 
-	// Ensure the pipeline knows how to interpret the data (numbers)
-	// from the vertex buffer.  
-	// - If all of your 3D models use the exact same vertex layout,
-	//    this could simply be done once in Init()
-	// - However, this isn't always the case (but might be for this course)
-	context->IASetInputLayout(inputLayout.Get());
-
-	VertexShaderExternalData vsData;  
-	vsData.colorTint = XMFLOAT4(1.0f, 0.5f, 0.5f, 1.0f);  
-	vsData.worldMatrix = XMFLOAT4X4(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1);
+	//insert meshes
+	entities[0].Draw(context,constantBufferVS,depthStencilView,vertexShader,pixelShader,inputLayout);
 
 
-	D3D11_MAPPED_SUBRESOURCE mappedBuffer = {};    
-	context->Map(constantBufferVS.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedBuffer);        memcpy(mappedBuffer.pData, &vsData, sizeof(vsData));
-	context->Unmap(constantBufferVS.Get(), 0);
-
-	context->VSSetConstantBuffers(0, // Which slot (register) to bind the buffer to?  
-		1, // How many are we activating?  Can do multiple at once  
-		constantBufferVS.GetAddressOf());  // Array of buffers (or the address of one)
-
-	triangle->Draw();
-	rect->Draw();
-	pentagon->Draw();
 	// Present the back buffer to the user
 	//  - Puts the final frame we're drawing into the window so the user can see it
 	//  - Do this exactly ONCE PER FRAME (always at the very end of the frame)

@@ -25,19 +25,13 @@ void Transform::SetPosition(float x, float y, float z)
 
 void Transform::SetRotation(float pitch, float yaw, float roll)
 {
-    float cp = cos(pitch * .5);
-    float sp = sin(pitch * .5);
-    float cy = cos(yaw * .5);
-    float sy = sin(yaw * .5);
-    float cr = cos(roll * .5);
-    float sr = sin(roll * .5);
+    DirectX::XMVECTOR quat = DirectX::XMQuaternionRotationRollPitchYaw(pitch, yaw, roll);
+    XMStoreFloat4(&rotation, quat);
+}
 
-    float w = cr * cp * cy + sr * sp * sy;
-    float x = sr * cp * cy - cr * sp * sy;
-    float y = cr * sp * cy + sr * cp * sy;
-    float z = cr * cp * sy - sr * sp * cy;
-
-    rotation = DirectX::XMFLOAT4(x,y,z,w);
+void Transform::SetRotation(DirectX::XMFLOAT4 quaternion)
+{
+    rotation = quaternion;
 }
 
 void Transform::SetScale(float x, float y, float z)
@@ -50,32 +44,10 @@ DirectX::XMFLOAT3 Transform::GetPosition()
     return position;
 }
 
-DirectX::XMFLOAT3 Transform::GetPitchYawRoll()
+DirectX::XMFLOAT4 Transform::GetQuaternion()
 {   
-    
-    //pitch
-    float sinp = 2 * (rotation.w * rotation.y - rotation.z * rotation.x);
-    float pitch = 0;
-    if (abs(sinp) >= 1)
-    {
-        pitch = copysign(DirectX::XM_PI / 2, sinp);
-    }
-    else
-    {
-        pitch = asin(sinp);
-    }
-   
-    //yaw
-    float siny_cosp = 2 * (rotation.w * rotation.z + rotation.x * rotation.y);
-    float cosy_cosp = 1 - 2 * (rotation.y * rotation.y + rotation.z * rotation.z);
-    float yaw = atan2(siny_cosp, cosy_cosp);
+    return rotation;
 
-    //roll
-    float sinrCosp = 2 * (rotation.w * rotation.x + rotation.y * rotation.z);
-    float cosrCosp = 1 - (2 * (rotation.x * rotation.x + rotation.y * rotation.y));
-    float roll = atan2(sinrCosp, cosrCosp);
-
-    return DirectX::XMFLOAT3(pitch, yaw, roll);
 }
 
 DirectX::XMFLOAT3 Transform::GetScale()
@@ -100,13 +72,22 @@ void Transform::MoveAbsolute(float x, float y, float z)
     position.z += z;
 }
 
+void Transform::Rotate(DirectX::XMFLOAT4 quaternionRotaion)
+{
+    DirectX::XMVECTOR quat = DirectX::XMVectorSet(quaternionRotaion.x, quaternionRotaion.y, quaternionRotaion.z, quaternionRotaion.w);
+    DirectX::XMVECTOR rotationVect = DirectX::XMVectorSet(rotation.x, rotation.y, rotation.z, rotation.w);
+    rotationVect = DirectX::XMQuaternionMultiply(rotationVect, quat);
+
+    XMStoreFloat4(&rotation, rotationVect);
+}
+
 void Transform::Rotate(float pitch, float yaw, float roll)
 {
-    DirectX::XMFLOAT3 pyr = GetPitchYawRoll();
-    pyr.x += pitch;
-    pyr.y += yaw;
-    pyr.z += roll;
-    SetRotation(pyr.x, pyr.y, pyr.z);
+    DirectX::XMVECTOR quat = DirectX::XMQuaternionRotationRollPitchYaw(pitch, yaw, roll);
+    DirectX::XMVECTOR rotationVect = DirectX::XMVectorSet(rotation.x, rotation.y, rotation.z, rotation.w);
+    rotationVect = DirectX::XMQuaternionMultiply(rotationVect, quat);
+
+    XMStoreFloat4(&rotation, rotationVect);
 }
 
 void Transform::Scale(float x, float y, float z)
