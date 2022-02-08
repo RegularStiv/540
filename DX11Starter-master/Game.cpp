@@ -240,6 +240,7 @@ void Game::Update(float deltaTime, float totalTime)
 		Quit();
 	for (int i = 0; i < entities.size(); i++)
 	{
+
 		entities[i].GetTransform()->SetPosition(0, 0, 0);
 		entities[i].GetTransform()->SetRotation(DirectX::XMFLOAT4(0,0,0,0));
 		entities[i].GetTransform()->SetScale(1,1,1);
