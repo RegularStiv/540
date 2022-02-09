@@ -10,9 +10,9 @@ std::shared_ptr<Mesh> GameEntity::GetMesh()
 	return mesh;
 }
 
-Transform GameEntity::GetTransform()
+Transform* GameEntity::GetTransform()
 {
-	return transform;
+	return &transform;
 }
 
 void GameEntity::Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> deviceContext, Microsoft::WRL::ComPtr<ID3D11Buffer> constBuffer, Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView, Microsoft::WRL::ComPtr<ID3D11VertexShader> vertexShader, Microsoft::WRL::ComPtr<ID3D11PixelShader> pixelShader, Microsoft::WRL::ComPtr<ID3D11InputLayout> inputLayout)

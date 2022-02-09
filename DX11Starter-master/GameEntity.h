@@ -10,7 +10,7 @@ public:
 	
 	GameEntity(std::shared_ptr<Mesh> mesh);
 	std::shared_ptr<Mesh> GetMesh();
-	Transform GetTransform();
+	Transform* GetTransform();
 	void Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> deviceContext,
 		Microsoft::WRL::ComPtr<ID3D11Buffer> constBuffer,
 		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView,

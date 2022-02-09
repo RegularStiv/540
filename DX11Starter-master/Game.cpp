@@ -214,9 +214,16 @@ void Game::CreateBasicGeometry()
 	};
 	unsigned int pentaIndices[] = { 0, 1, 2, 2, 1, 3, 2, 4, 0 };
 	pentagon = std::make_shared<Mesh>(pentaVertices, ARRAYSIZE(pentaVertices), pentaIndices, ARRAYSIZE(pentaIndices), device, context);
-	GameEntity one = GameEntity(triangle);
+	std::shared_ptr<GameEntity> one = std::make_shared<GameEntity>(triangle);
 	entities.push_back(one);
-	
+	std::shared_ptr<GameEntity> two = std::make_shared<GameEntity>(rect);
+	entities.push_back(two);
+	std::shared_ptr<GameEntity> three = std::make_shared<GameEntity>(pentagon);
+	entities.push_back(three);
+	std::shared_ptr<GameEntity> four = std::make_shared<GameEntity>(triangle);
+	entities.push_back(four);
+	std::shared_ptr<GameEntity> five = std::make_shared<GameEntity>(triangle);
+	entities.push_back(five);
 }
 
 
@@ -238,14 +245,36 @@ void Game::Update(float deltaTime, float totalTime)
 	// Example input checking: Quit if the escape key is pressed
 	if (Input::GetInstance().KeyDown(VK_ESCAPE))
 		Quit();
-	for (int i = 0; i < entities.size(); i++)
-	{
 
-		entities[i].GetTransform()->SetPosition(0, 0, 0);
-		entities[i].GetTransform()->SetRotation(DirectX::XMFLOAT4(0,0,0,0));
-		entities[i].GetTransform()->SetScale(1,1,1);
-		entities[i].GetTransform()->UpdateMatricies();
-	}
+	//manually changed different values to show off different combinations of scaling translations and rotations
+#pragma region entity drawing different transforms
+
+	//rotating in place
+	entities.at(0)->GetTransform()->SetScale(.5, .5,.5);
+	entities.at(0)->GetTransform()->SetRotation( 0, 0, totalTime);
+	entities.at(0)->GetTransform()->SetPosition(.25, .25, .25);
+	
+	//rotating and scaling
+	entities.at(1)->GetTransform()->SetScale(1 - (sin(totalTime) * .5), 1 - (sin(totalTime) * .5), 1 - (cos(totalTime) * .5));
+	entities.at(1)->GetTransform()->SetRotation(0, 0, cos(totalTime));
+	entities.at(1)->GetTransform()->SetPosition(-.25, -.25, 0);
+
+	//moving and rotating
+	entities.at(2)->GetTransform()->SetScale(.5, .5, .5);
+	entities.at(2)->GetTransform()->SetRotation(0, 0, cos(totalTime));
+	entities.at(2)->GetTransform()->SetPosition((sin(totalTime)), (sin(totalTime)), 0);
+
+	//translation and scaling 
+	entities.at(3)->GetTransform()->SetScale(1 - (sin(totalTime) * .5), 1 - (sin(totalTime) * .5), 1 - (cos(totalTime) * .5));
+	entities.at(3)->GetTransform()->SetRotation(0, 0, 0);
+	entities.at(3)->GetTransform()->SetPosition(0, 1 - (sin(totalTime) * .5), 0);
+
+	//scaling in only 2 directions
+	entities.at(4)->GetTransform()->SetScale(cos(totalTime), sin(totalTime), 1);
+	entities.at(4)->GetTransform()->SetRotation(0, 0, 0);
+	entities.at(4)->GetTransform()->SetPosition(-.5, .5, 0);
+
+#pragma endregion
 }
 
 // --------------------------------------------------------
@@ -265,10 +294,13 @@ void Game::Draw(float deltaTime, float totalTime)
 		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
 		1.0f,
 		0);
+	
 
-
-	//insert meshes
-	entities[0].Draw(context,constantBufferVS,depthStencilView,vertexShader,pixelShader,inputLayout);
+	//draws each entity meshes
+	for (int i = 0; i < entities.size(); i++)
+	{
+		entities.at(i)->Draw(context, constantBufferVS, depthStencilView, vertexShader, pixelShader, inputLayout);
+	}
 
 
 	// Present the back buffer to the user

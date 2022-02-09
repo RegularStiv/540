@@ -25,9 +25,7 @@ void Transform::SetPosition(float x, float y, float z)
 
 void Transform::SetPosition(DirectX::XMFLOAT3 xyz)
 {
-    position.x = xyz.x;
-    position.y = xyz.y;
-    position.z = xyz.z;
+    position = xyz;
 }
 
 void Transform::SetRotation(float pitch, float yaw, float roll)
