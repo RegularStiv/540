@@ -34,6 +34,8 @@ Game::Game(HINSTANCE hInstance)
 	CreateConsoleWindow(500, 120, 32, 120);
 	printf("Console window created successfully.  Feel free to printf() here.\n");
 #endif
+
+	camera = std::make_shared<Camera>(0.0f, 0.0f, -5.0f, (float)width / height);
 }
 
 // --------------------------------------------------------
@@ -250,17 +252,17 @@ void Game::Update(float deltaTime, float totalTime)
 #pragma region entity drawing different transforms
 
 	//rotating in place
-	entities.at(0)->GetTransform()->SetScale(.5, .5,.5);
+	entities.at(0)->GetTransform()->SetScale(.5f, .5f,.5f);
 	entities.at(0)->GetTransform()->SetRotation( 0, 0, totalTime);
 	entities.at(0)->GetTransform()->SetPosition(.25, .25, .25);
 	
 	//rotating and scaling
-	entities.at(1)->GetTransform()->SetScale(1 - (sin(totalTime) * .5), 1 - (sin(totalTime) * .5), 1 - (cos(totalTime) * .5));
+	entities.at(1)->GetTransform()->SetScale(1 - (sin(totalTime) * .5f), 1 - (sin(totalTime) * .5f), 1 - (cos(totalTime) * .5f));
 	entities.at(1)->GetTransform()->SetRotation(0, 0, cos(totalTime));
 	entities.at(1)->GetTransform()->SetPosition(-.25, -.25, 0);
 
 	//moving and rotating
-	entities.at(2)->GetTransform()->SetScale(.5, .5, .5);
+	entities.at(2)->GetTransform()->SetScale(.5f, .5f, .5f);
 	entities.at(2)->GetTransform()->SetRotation(0, 0, cos(totalTime));
 	entities.at(2)->GetTransform()->SetPosition((sin(totalTime)), (sin(totalTime)), 0);
 

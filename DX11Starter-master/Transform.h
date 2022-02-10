@@ -35,9 +35,11 @@ public:
 
 	//functions
 	void MoveAbsolute(float x, float y, float z);
+	void MoveRelative(float x, float y, float z);
 	void Rotate(DirectX::XMFLOAT4 quaternionRotaion);
 	void Rotate(float pitch, float yaw, float roll);
 	void Scale(float x, float y, float z);
+
 	//helpers 
 	void UpdateMatricies();
 	DirectX::XMMATRIX Translation();

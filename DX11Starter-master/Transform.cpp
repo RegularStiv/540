@@ -1,5 +1,5 @@
 #include "Transform.h"
-
+using namespace DirectX;
 Transform::Transform()
 {
     this->worldMatrix = DirectX::XMFLOAT4X4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
@@ -82,6 +82,16 @@ void Transform::MoveAbsolute(float x, float y, float z)
     position.x += x;
     position.y += y;
     position.z += z;
+}
+
+void Transform::MoveRelative(float x, float y, float z)
+{
+    DirectX::XMVECTOR moveVec = DirectX::XMVectorSet(x, y, z, 0);
+    DirectX::XMVECTOR rotatedVec = DirectX::XMVector3Rotate(moveVec, 
+        DirectX::XMLoadFloat4(&rotation));
+
+    DirectX::XMVECTOR newPos = DirectX::XMLoadFloat3(&position) + rotatedVec;
+    DirectX::XMStoreFloat3(&position, newPos);
 }
 
 void Transform::Rotate(DirectX::XMFLOAT4 quaternionRotaion)
