@@ -7,6 +7,9 @@ Transform::Transform()
     this->position = DirectX::XMFLOAT3(0, 0, 0);
     this->scale = DirectX::XMFLOAT3(1, 1, 1);
     this->rotation = DirectX::XMFLOAT4(0,0,0,0);
+    this->forward = DirectX::XMFLOAT3(0, 0, 1);
+    this->up = DirectX::XMFLOAT3(0, 1, 0);
+    this->right = DirectX::XMFLOAT3(1, 0, 0);
 }
 
 Transform::Transform(DirectX::XMFLOAT4X4 world, DirectX::XMFLOAT4X4 worldInverseTranspose, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 scale, DirectX::XMFLOAT4 rotaion)
@@ -16,6 +19,18 @@ Transform::Transform(DirectX::XMFLOAT4X4 world, DirectX::XMFLOAT4X4 worldInverse
     this->position = position;
     this->scale = scale;
     this->rotation = rotaion;
+    this->forward = DirectX::XMFLOAT3(0, 0, 1);
+    this->up = DirectX::XMFLOAT3(0, 1, 0);
+    this->right = DirectX::XMFLOAT3(1, 0, 0);
+     XMVECTOR forwardRot = DirectX::XMVector3Rotate(XMLoadFloat3(&forward),
+        DirectX::XMLoadFloat4(&rotation));
+     XMVECTOR upRot = DirectX::XMVector3Rotate(XMLoadFloat3(&up),
+         DirectX::XMLoadFloat4(&rotation));
+     XMVECTOR rightRot = DirectX::XMVector3Rotate(XMLoadFloat3(&right),
+         DirectX::XMLoadFloat4(&rotation));
+    XMStoreFloat3(&forward, forwardRot);
+    XMStoreFloat3(&up, upRot);
+    XMStoreFloat3(&right, rightRot);
 }
 
 void Transform::SetPosition(float x, float y, float z)
@@ -75,6 +90,21 @@ DirectX::XMFLOAT4X4 Transform::GetWorldInverseTransposeMatrix()
 {
     UpdateMatricies();
     return worldInverseTranspose;
+}
+
+DirectX::XMFLOAT3 Transform::GetRight()
+{
+    return right;
+}
+
+DirectX::XMFLOAT3 Transform::GetUp()
+{
+    return up;
+}
+
+DirectX::XMFLOAT3 Transform::GetForward()
+{
+    return forward;
 }
 
 void Transform::MoveAbsolute(float x, float y, float z)

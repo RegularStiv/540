@@ -12,6 +12,9 @@ public:
 	DirectX::XMFLOAT3 position;
 	DirectX::XMFLOAT3 scale;
 	DirectX::XMFLOAT4 rotation;
+	DirectX::XMFLOAT3 up;
+	DirectX::XMFLOAT3 right;
+	DirectX::XMFLOAT3 forward;
 
 	//constructors
 	Transform();
@@ -26,12 +29,16 @@ public:
 	void SetScale(float x, float y, float z);
 	void SetScale(DirectX::XMFLOAT3 xyz);
 
+
 	//getters
 	DirectX::XMFLOAT3 GetPosition();
 	DirectX::XMFLOAT4 GetQuaternion(); // XMFLOAT4 GetRotation() for quaternions 
 	DirectX::XMFLOAT3 GetScale();
 	DirectX::XMFLOAT4X4 GetWorldMatrix();
 	DirectX::XMFLOAT4X4 GetWorldInverseTransposeMatrix();
+	DirectX::XMFLOAT3 GetRight();
+	DirectX::XMFLOAT3 GetUp();
+	DirectX::XMFLOAT3 GetForward();
 
 	//functions
 	void MoveAbsolute(float x, float y, float z);
