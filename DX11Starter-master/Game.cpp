@@ -2,6 +2,7 @@
 #include "Vertex.h"
 #include "Input.h"
 #include "Mesh.h"
+#include "Camera.h"
 #include <memory>
 
 // Needed for a helper function to read compiled shader files from the hard drive
@@ -35,7 +36,7 @@ Game::Game(HINSTANCE hInstance)
 	printf("Console window created successfully.  Feel free to printf() here.\n");
 #endif
 
-	camera = std::make_shared<Camera>(0.0f, 0.0f, -5.0f, (float)width / height);
+	
 }
 
 // --------------------------------------------------------
@@ -82,6 +83,8 @@ void Game::Init()
 
 	
 	device->CreateBuffer(&cbDesc, 0, constantBufferVS.GetAddressOf());
+
+	camera = std::make_shared<Camera>(DirectX::XM_1DIV2PI, 0.0f, 0.0f, -5.0f, (float)width / height);
 
 }
 
@@ -237,6 +240,10 @@ void Game::OnResize()
 {
 	// Handle base-level DX resize stuff
 	DXCore::OnResize();
+	if (camera != 0)
+	{
+		camera->UpdateProjectionMatrix(DirectX::XM_1DIV2PI, (float)this->width / this->height, .1, 10);
+	}
 }
 
 // --------------------------------------------------------
@@ -276,6 +283,7 @@ void Game::Update(float deltaTime, float totalTime)
 	entities.at(4)->GetTransform()->SetRotation(0, 0, 0);
 	entities.at(4)->GetTransform()->SetPosition(-.5, .5, 0);
 
+	camera->Update(deltaTime);
 #pragma endregion
 }
 
@@ -301,7 +309,7 @@ void Game::Draw(float deltaTime, float totalTime)
 	//draws each entity meshes
 	for (int i = 0; i < entities.size(); i++)
 	{
-		entities.at(i)->Draw(context, constantBufferVS, depthStencilView, vertexShader, pixelShader, inputLayout);
+		entities.at(i)->Draw(context, constantBufferVS, depthStencilView, vertexShader, pixelShader, inputLayout, camera);
 	}
 
 

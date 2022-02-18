@@ -15,7 +15,10 @@ Transform* GameEntity::GetTransform()
 	return &transform;
 }
 
-void GameEntity::Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> deviceContext, Microsoft::WRL::ComPtr<ID3D11Buffer> constBuffer, Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView, Microsoft::WRL::ComPtr<ID3D11VertexShader> vertexShader, Microsoft::WRL::ComPtr<ID3D11PixelShader> pixelShader, Microsoft::WRL::ComPtr<ID3D11InputLayout> inputLayout)
+void GameEntity::Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> deviceContext, Microsoft::WRL::ComPtr<ID3D11Buffer> constBuffer, 
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView, Microsoft::WRL::ComPtr<ID3D11VertexShader> vertexShader, 
+	Microsoft::WRL::ComPtr<ID3D11PixelShader> pixelShader, Microsoft::WRL::ComPtr<ID3D11InputLayout> inputLayout,
+	std::shared_ptr<Camera> camera)
 {
 	// Set the vertex and pixel shaders to use for the next Draw() command
 	//  - These don't technically need to be set every frame
@@ -34,6 +37,8 @@ void GameEntity::Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> deviceContext,
 	VertexShaderExternalData vsData;
 	vsData.colorTint = DirectX::XMFLOAT4(1.0f, 0.5f, 0.5f, 1.0f);
 	vsData.worldMatrix = transform.GetWorldMatrix();
+	vsData.projection = camera->GetProjectionMatrix();
+	vsData.view = camera->GetViewMatrix();
 
 	D3D11_MAPPED_SUBRESOURCE mappedBuffer = {};
 	deviceContext->Map(constBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedBuffer);

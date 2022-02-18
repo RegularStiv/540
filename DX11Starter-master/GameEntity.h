@@ -4,6 +4,7 @@
 #include "Mesh.h"
 #include <DirectXMath.h>
 #include "BufferStructs.h"
+#include "Camera.h"
 class GameEntity
 {
 public:
@@ -16,7 +17,8 @@ public:
 		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView,
 		Microsoft::WRL::ComPtr<ID3D11VertexShader> vertexShader,
 		Microsoft::WRL::ComPtr<ID3D11PixelShader> pixelShader,
-		Microsoft::WRL::ComPtr<ID3D11InputLayout> inputLayout);
+		Microsoft::WRL::ComPtr<ID3D11InputLayout> inputLayout,
+		std::shared_ptr<Camera> camera);
 private:
 	Transform transform;
 	std::shared_ptr<Mesh> mesh;
