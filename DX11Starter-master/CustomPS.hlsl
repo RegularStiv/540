@@ -29,11 +29,15 @@ cbuffer ExternalData : register(b0)
 //    "put the output of this into the current render target"
 // - Named "main" because that's the default the shader compiler looks for
 // --------------------------------------------------------
+float random(float2 s)
+{
+	return frac(sin(dot(s, float2(12.9898, 78.233))) * 43758.5453123);
+}
 float4 main(VertexToPixel input) : SV_TARGET
 {
 	// Just return the input color
 	// - This color (like most values passing through the rasterizer) is 
 	//   interpolated for each pixel between the corresponding vertices 
 	//   of the triangle we're rendering
-	return float4(input.uv, 0, 1);
+	return float4(random(asin(input.uv *30)),random(atan(input.uv*12)),cos(input.uv*12));
 }
