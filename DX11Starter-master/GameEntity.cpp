@@ -45,7 +45,7 @@ void GameEntity::Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> deviceContext,
 	material->GetVertexShader()->SetMatrix4x4("world", transform.GetWorldMatrix());
 	material->GetVertexShader()->SetMatrix4x4("view", camera->GetViewMatrix());
 	material->GetVertexShader()->SetMatrix4x4("projection", camera->GetProjectionMatrix());
-
+	material->GetVertexShader()->SetMatrix4x4("worldInvTranspose", transform.GetWorldInverseTransposeMatrix());
 	material->GetVertexShader()->CopyAllBufferData();
 	material->GetPixelShader()->CopyAllBufferData();
 	// 

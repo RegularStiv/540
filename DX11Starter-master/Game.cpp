@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include <memory>
 #include "Material.h"
+#include "Lights.h"
 
 // Needed for a helper function to read compiled shader files from the hard drive
 #pragma comment(lib, "d3dcompiler.lib")
@@ -65,13 +66,16 @@ void Game::Init()
 	// geometry to draw and some simple camera matrices.
 	//  - You'll be expanding and/or replacing these later
 	LoadShaders();
-	std::shared_ptr<Material> mat1 = std::make_shared<Material>(vertexShader, pixelShader, DirectX::XMFLOAT4(1, 1, 1, 1));
+	ambiant = XMFLOAT3(.25,0,.25);
+	std::shared_ptr<Material> mat1 = std::make_shared<Material>(vertexShader, pixelShader, DirectX::XMFLOAT4(1, 1, 1, 1), 1);
 	materials.push_back(mat1);
-	std::shared_ptr<Material> mat2 = std::make_shared<Material>(vertexShader, customPixelShader, DirectX::XMFLOAT4(1, 1, 1, 1));
+	std::shared_ptr<Material> mat2 = std::make_shared<Material>(vertexShader, customPixelShader, DirectX::XMFLOAT4(1, 1, 1, 1), 2);
 	materials.push_back(mat2);
-	std::shared_ptr<Material> mat3 = std::make_shared<Material>(vertexShader, pixelShader, DirectX::XMFLOAT4(1, 1, 1, 1));
-	materials.push_back(mat3);
-
+	Light light = {};
+	light.Type = LIGHT_TYPE_DIRECTIONAL;
+	light.Direction = XMFLOAT3(1, -1, 0);
+	light.Color = XMFLOAT3(255, 0, 0);
+	light.Intensity = 1;
 	CreateBasicGeometry();
 	
 	
@@ -180,6 +184,13 @@ void Game::Draw(float deltaTime, float totalTime)
 	//draws each entity meshes
 	for (int i = 0; i < entities.size(); i++)
 	{
+		pixelShader->SetData(
+			"directionalLight1", // The name of the (eventual) variable in the shader
+			&light, // The address of the data to set
+			sizeof(Light)); // The size of the data (the whole struct!) to set
+		entities.at(i)->GetMaterial()->GetPixelShader()->SetFloat3("ambient", ambiant);
+		entities.at(i)->GetMaterial()->GetPixelShader()->SetFloat("roughness", entities.at(i)->GetMaterial()->GetRoughness());
+		entities.at(i)->GetMaterial()->GetPixelShader()->SetFloat3("cameraPosition", camera->GetTransform()->GetPosition());
 		entities.at(i)->Draw(context, camera);
 	}
 

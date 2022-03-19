@@ -26,10 +26,12 @@ DirectX::XMFLOAT4 Material::GetColorTint()
     return colorTint;
 }
 
-void Material::PrepareMaterial()
+float Material::GetRoughness()
 {
-    pixelShader->SetFloat();
+    return this->roughness;
 }
+
+
 
 void Material::SetPixelShader(std::shared_ptr<SimplePixelShader> pixelShader)
 {

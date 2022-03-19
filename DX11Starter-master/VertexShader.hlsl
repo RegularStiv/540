@@ -5,6 +5,7 @@ cbuffer ExternalData : register(b0)
 	matrix world; 
 	matrix view;
 	matrix projection;
+	matrix worldInvTranspose;
 }
 // --------------------------------------------------------
 // The entry point (main method) for our vertex shader
@@ -29,6 +30,11 @@ VertexToPixel main( VertexShaderInput input )
 	matrix wvp = mul(projection, mul(view, world));
 	output.screenPosition = mul(wvp, float4(input.localPosition, 1.0f));
 
+
+	output.normal = mul((float3x3)world, input.normal);
+	output.normal = mul((float3x3)worldInvTranspose, input.normal);
+
+	output.worldPosition = mul(world, float4(input.localPosition, 1)).xyz;
 	// Pass the color through 
 	// - The values will be interpolated per-pixel by the rasterizer
 	// - We don't need to alter it here, but we do need to send it to the pixel shader
