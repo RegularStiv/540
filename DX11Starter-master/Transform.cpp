@@ -150,11 +150,11 @@ void Transform::Rotate(DirectX::XMFLOAT4 quaternionRotation)
 
     XMStoreFloat4(&rotation, rotationVect);
 
-    XMVECTOR forwardRot = DirectX::XMVector3Rotate(XMLoadFloat3(&forward),
+    XMVECTOR forwardRot = DirectX::XMVector3Rotate(XMVectorSet(0, 0, 1, 0),
         DirectX::XMLoadFloat4(&rotation));
-    XMVECTOR upRot = DirectX::XMVector3Rotate(XMLoadFloat3(&up),
+    XMVECTOR upRot = DirectX::XMVector3Rotate(XMVectorSet(0, 1, 0, 0),
         DirectX::XMLoadFloat4(&rotation));
-    XMVECTOR rightRot = DirectX::XMVector3Rotate(XMLoadFloat3(&right),
+    XMVECTOR rightRot = DirectX::XMVector3Rotate(XMVectorSet(1, 0, 0, 0),
         DirectX::XMLoadFloat4(&rotation));
     XMStoreFloat3(&forward, forwardRot);
     XMStoreFloat3(&up, upRot);
@@ -169,11 +169,11 @@ void Transform::Rotate(float pitch, float yaw, float roll)
 
     XMStoreFloat4(&rotation, rotationVect);
 
-    XMVECTOR forwardRot = DirectX::XMVector3Rotate(XMLoadFloat3(&forward),
+    XMVECTOR forwardRot = DirectX::XMVector3Rotate(XMVectorSet(0,0,1,0),
         DirectX::XMLoadFloat4(&rotation));
-    XMVECTOR upRot = DirectX::XMVector3Rotate(XMLoadFloat3(&up),
+    XMVECTOR upRot = DirectX::XMVector3Rotate(XMVectorSet(0, 1, 0, 0),
         DirectX::XMLoadFloat4(&rotation));
-    XMVECTOR rightRot = DirectX::XMVector3Rotate(XMLoadFloat3(&right),
+    XMVECTOR rightRot = DirectX::XMVector3Rotate(XMVectorSet(1, 0, 0, 0),
         DirectX::XMLoadFloat4(&rotation));
     XMStoreFloat3(&forward, forwardRot);
     XMStoreFloat3(&up, upRot);

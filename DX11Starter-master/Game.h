@@ -27,7 +27,6 @@ public:
 	void Update(float deltaTime, float totalTime);
 	void Draw(float deltaTime, float totalTime);
 
-	void PrepareMaterial(Material mat);
 
 private:
 
@@ -57,7 +56,8 @@ private:
 	std::shared_ptr<Mesh> pentagon;
 	std::vector<std::shared_ptr<GameEntity>> entities;
 	std::vector<std::shared_ptr<Material>> materials;
-	Light light;
+	std::vector<Light> lights;
+
 	std::shared_ptr<Camera> camera;
 	DirectX::XMFLOAT3 ambiant;
 	Transform transform;

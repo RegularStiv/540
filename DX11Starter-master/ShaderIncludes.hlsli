@@ -51,6 +51,24 @@ struct VertexToPixel
 	float2 uv				: TEXCOORD;
 
 };
+float3 Diffuse(float3 normal, float3 dirToLight) 
+{
+	return saturate(dot(normal, dirToLight));
+}
+float Attenuate(Light light, float3 worldPos)
+{
+	float dist = distance(light.Position, worldPos);
+	float att = saturate(1.0f - (dist * dist / (light.Range * light.Range)));
+	return att * att;
+}
+float Phong(float3 normal, float3 pixelWorldPosition, float maxSpec, float roughness, float3 cameraPosition, float3 incomingLightDirection)
+{
+	float specExponent = (1 - roughness) * maxSpec;
+	float3 V = normalize(cameraPosition - pixelWorldPosition);
+	float3 R = reflect(incomingLightDirection, normal);
+	float spec = pow(saturate(dot(R, V)), specExponent);
+	return spec;
+}
 float random(float2 s)
 {
 	return frac(sin(dot(s, float2(12.9898, 78.233))) * 43758.5453123);

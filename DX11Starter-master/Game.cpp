@@ -66,16 +66,44 @@ void Game::Init()
 	// geometry to draw and some simple camera matrices.
 	//  - You'll be expanding and/or replacing these later
 	LoadShaders();
-	ambiant = XMFLOAT3(.25,0,.25);
-	std::shared_ptr<Material> mat1 = std::make_shared<Material>(vertexShader, pixelShader, DirectX::XMFLOAT4(1, 1, 1, 1), 1);
+	ambiant = XMFLOAT3(.1,.1,.25);
+	std::shared_ptr<Material> mat1 = std::make_shared<Material>(vertexShader, pixelShader, DirectX::XMFLOAT4(1, 1, 1, 1), .2);
 	materials.push_back(mat1);
 	std::shared_ptr<Material> mat2 = std::make_shared<Material>(vertexShader, customPixelShader, DirectX::XMFLOAT4(1, 1, 1, 1), 2);
 	materials.push_back(mat2);
+
 	Light light = {};
 	light.Type = LIGHT_TYPE_DIRECTIONAL;
-	light.Direction = XMFLOAT3(1, -1, 0);
-	light.Color = XMFLOAT3(255, 0, 0);
+	light.Direction = XMFLOAT3(1, 0, 0);
+	light.Color = XMFLOAT3(1, 0, 0);
 	light.Intensity = 1;
+	lights.push_back(light);
+	light = {};
+	light.Type = LIGHT_TYPE_DIRECTIONAL;
+	light.Direction = XMFLOAT3(0, 0, 1);
+	light.Color = XMFLOAT3(0, 0, 1);
+	light.Intensity = 1;
+	lights.push_back(light);
+	light = {};
+	light.Type = LIGHT_TYPE_DIRECTIONAL;
+	light.Direction = XMFLOAT3(0, 1, 0);
+	light.Color = XMFLOAT3(0, 1, 0);
+	light.Intensity = 1;
+	lights.push_back(light);
+	light = {};
+	light.Type = LIGHT_TYPE_POINT;
+	light.Position = XMFLOAT3(5, -5, 10);
+	light.Range = 10;
+	light.Color = XMFLOAT3(1, 1, 1);
+	light.Intensity = 1;
+	lights.push_back(light);
+	light = {};
+	light.Type = LIGHT_TYPE_POINT;
+	light.Position = XMFLOAT3(-5, -5, 10);
+	light.Range = 10;
+	light.Color = XMFLOAT3(1, 1, 1);
+	light.Intensity = 1;
+	lights.push_back(light);
 	CreateBasicGeometry();
 	
 	
@@ -117,13 +145,13 @@ void Game::LoadShaders()
 void Game::CreateBasicGeometry()
 {
 	
-	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/sphere.obj").c_str(), device, context), materials[1]));
+	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/sphere.obj").c_str(), device, context), materials[0]));
 	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/cube.obj").c_str(), device, context), materials[0]));
-	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/cylinder.obj").c_str(), device, context), materials[1]));
+	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/cylinder.obj").c_str(), device, context), materials[0]));
 	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/helix.obj").c_str(), device, context), materials[0]));
-	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/quad.obj").c_str(), device, context), materials[1]));
+	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/quad.obj").c_str(), device, context), materials[0]));
 	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/quad_double_sided.obj").c_str(), device, context), materials[0]));
-	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/torus.obj").c_str(), device, context), materials[1]));
+	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/torus.obj").c_str(), device, context), materials[0]));
 }
 
 
@@ -184,10 +212,7 @@ void Game::Draw(float deltaTime, float totalTime)
 	//draws each entity meshes
 	for (int i = 0; i < entities.size(); i++)
 	{
-		pixelShader->SetData(
-			"directionalLight1", // The name of the (eventual) variable in the shader
-			&light, // The address of the data to set
-			sizeof(Light)); // The size of the data (the whole struct!) to set
+		pixelShader->SetData("lights", &lights[0], sizeof(Light) * (int)lights.size());
 		entities.at(i)->GetMaterial()->GetPixelShader()->SetFloat3("ambient", ambiant);
 		entities.at(i)->GetMaterial()->GetPixelShader()->SetFloat("roughness", entities.at(i)->GetMaterial()->GetRoughness());
 		entities.at(i)->GetMaterial()->GetPixelShader()->SetFloat3("cameraPosition", camera->GetTransform()->GetPosition());

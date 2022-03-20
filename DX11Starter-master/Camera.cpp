@@ -23,7 +23,7 @@ void Camera::Update(float dt)
     if (input.KeyDown('D')) { transform.MoveRelative(speed * dt, 0, 0); }
     if (input.KeyDown('Q')) { transform.MoveAbsolute(0, -speed * dt, 0); }
     if (input.KeyDown('E')) { transform.MoveAbsolute(0, speed * dt, 0); }
-    float rotSpeed = .001 * dt;
+    float rotSpeed = 2 * dt;
     if (input.MouseLeftDown())
     {
         
