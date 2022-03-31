@@ -1,6 +1,7 @@
 #include "ShaderIncludes.hlsli"
 
-
+Texture2D SurfaceTexture	:		register(t0); // "t" registers for textures
+SamplerState BasicSampler	:		register(s0); // "s" registers for samplers
 cbuffer ExternalData : register(b0)
 {
 	float4 colorTint;
@@ -22,7 +23,8 @@ float4 main(VertexToPixel input) : SV_TARGET
 {
 
 	input.normal = normalize(input.normal);
-
+	// Adjust the variables below as necessary to work with your own code
+	float3 surfaceColor = SurfaceTexture.Sample(BasicSampler, input.uv).rgb;
 	float3 negDirectionNormal = normalize(-lights[0].Direction);
 	float3 diffuse =  (Diffuse(input.normal, negDirectionNormal));
 	float light = Phong(input.normal, input.worldPosition, MAX_SPECULAR_EXPONENT, roughness, cameraPosition, -negDirectionNormal);

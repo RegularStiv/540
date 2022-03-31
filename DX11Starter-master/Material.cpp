@@ -47,3 +47,19 @@ void Material::SetColorTint(DirectX::XMFLOAT4 colorTint)
 {
     this->colorTint = colorTint;
 }
+
+void Material::AddTextureSRV(std::string shaderName, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srv)
+{
+    textureSRVs.insert({ shaderName, srv });
+}
+
+void Material::AddSampler(std::string shaderName, Microsoft::WRL::ComPtr<ID3D11SamplerState> sampler)
+{
+    samplers.insert({ shaderName, sampler });
+}
+
+void Material::PrepareMaterial(std::shared_ptr<SimplePixelShader> ps)
+{
+    for (auto& t : textureSRVs) { ps->SetShaderResourceView(t.first.c_str(), t.second); }
+    for (auto& s : samplers) { ps->SetSamplerState(s.first.c_str(), s.second); }
+}

@@ -86,10 +86,17 @@ void Game::Init()
 
 	ambiant = XMFLOAT3(.1,.1,.25);
 	std::shared_ptr<Material> mat1 = std::make_shared<Material>(vertexShader, pixelShader, DirectX::XMFLOAT4(1, 1, 1, 1), .2);
+	mat1->AddTextureSRV("PixelShader",groundSRV);
+	mat1->AddSampler("PixelShader",sampler);
+	mat1->PrepareMaterial(pixelShader);
+
 	materials.push_back(mat1);
 	std::shared_ptr<Material> mat2 = std::make_shared<Material>(vertexShader, customPixelShader, DirectX::XMFLOAT4(1, 1, 1, 1), 2);
+	
+	
 	materials.push_back(mat2);
 
+	
 	Light light = {};
 	light.Type = LIGHT_TYPE_DIRECTIONAL;
 	light.Direction = XMFLOAT3(1, 0, 0);

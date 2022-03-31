@@ -22,6 +22,8 @@ cbuffer ExternalData : register(b0)
 
 float4 main(VertexToPixel input) : SV_TARGET
 {
+
+	
 	// Just return the input color
 	// - This color (like most values passing through the rasterizer) is 
 	//   interpolated for each pixel between the corresponding vertices 
