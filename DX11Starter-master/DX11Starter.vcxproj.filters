@@ -100,5 +100,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ShaderIncludes.hlsli" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="textures\ground-diffuse.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\stone-brick-diffuse.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

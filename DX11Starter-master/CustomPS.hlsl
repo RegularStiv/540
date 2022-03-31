@@ -9,6 +9,7 @@ cbuffer ExternalData : register(b0)
 {
 	float4 colorTint;
 }
+
 // --------------------------------------------------------
 // The entry point (main method) for our pixel shader
 // 
