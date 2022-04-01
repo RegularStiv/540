@@ -80,22 +80,26 @@ void Game::Init()
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> groundSRV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> groundSpecSRV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> brickSpecSRV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> brickSRV;
 
 	CreateWICTextureFromFile(device.Get(), context.Get(), GetFullPathTo_Wide(L"../../Assets/textures/ground-diffuse.jpg").c_str(), nullptr, groundSRV.GetAddressOf());
-	CreateWICTextureFromFile(device.Get(), context.Get(), GetFullPathTo_Wide(L"../../Assets/textures/ground-spec.jpg").c_str(), nullptr, groundSpecSRV.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), GetFullPathTo_Wide(L"../../Assets/textures/ground-spec2.png").c_str(), nullptr, groundSpecSRV.GetAddressOf());
 	CreateWICTextureFromFile(device.Get(), context.Get(), GetFullPathTo_Wide(L"../../Assets/textures/stone-brick-diffuse.jpg").c_str(), nullptr, brickSRV.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), GetFullPathTo_Wide(L"../../Assets/textures/stone-brick-spec1.png").c_str(), nullptr, brickSpecSRV.GetAddressOf());
 
 	ambiant = XMFLOAT3(.1,.1,.25);
 	std::shared_ptr<Material> mat1 = std::make_shared<Material>(vertexShader, pixelShader, DirectX::XMFLOAT4(1, 1, 1, 1), .2);
+	std::shared_ptr<Material> mat2 = std::make_shared<Material>(vertexShader, pixelShader, DirectX::XMFLOAT4(1, 1, 1, 1), .2);
 	mat1->AddTextureSRV("SurfaceTexture",groundSRV); 
 	mat1->AddTextureSRV("SpecularTexture", groundSpecSRV);
 	mat1->AddSampler("BasicSampler",sampler);
-	mat1->PrepareMaterial(pixelShader);
 
 	materials.push_back(mat1);
-	std::shared_ptr<Material> mat2 = std::make_shared<Material>(vertexShader, customPixelShader, DirectX::XMFLOAT4(1, 1, 1, 1), 2);
 	
+	mat2->AddTextureSRV("SurfaceTexture", brickSRV);
+	mat2->AddTextureSRV("SpecularTexture", brickSpecSRV);
+	mat2->AddSampler("BasicSampler", sampler);
 	
 	materials.push_back(mat2);
 
@@ -176,11 +180,11 @@ void Game::CreateBasicGeometry()
 
 
 	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/sphere.obj").c_str(), device, context), materials[0]));
-	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/cube.obj").c_str(), device, context), materials[0]));
+	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/cube.obj").c_str(), device, context), materials[1]));
 	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/cylinder.obj").c_str(), device, context), materials[0]));
-	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/helix.obj").c_str(), device, context), materials[0]));
+	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/helix.obj").c_str(), device, context), materials[1]));
 	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/quad.obj").c_str(), device, context), materials[0]));
-	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/quad_double_sided.obj").c_str(), device, context), materials[0]));
+	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/quad_double_sided.obj").c_str(), device, context), materials[1]));
 	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/torus.obj").c_str(), device, context), materials[0]));
 }
 
@@ -210,7 +214,10 @@ void Game::Update(float deltaTime, float totalTime)
 
 	//manually changed different values to show off different combinations of scaling translations and rotations
 #pragma region entity drawing different transforms
-
+	for (int i = 0; i < entities.size(); i++)
+	{
+		entities.at(i)->GetTransform()->SetRotation(0,totalTime/2,0);
+	}
 	for (int i = 0; i < entities.size(); i++) {
 		float offset = -10 + (i * 3);
 		entities.at(i)->GetTransform()->SetPosition(offset, -3, 10);
@@ -246,6 +253,7 @@ void Game::Draw(float deltaTime, float totalTime)
 		entities.at(i)->GetMaterial()->GetPixelShader()->SetFloat3("ambient", ambiant);
 		entities.at(i)->GetMaterial()->GetPixelShader()->SetFloat("roughness", entities.at(i)->GetMaterial()->GetRoughness());
 		entities.at(i)->GetMaterial()->GetPixelShader()->SetFloat3("cameraPosition", camera->GetTransform()->GetPosition());
+		entities.at(i)->GetMaterial()->PrepareMaterial();
 		entities.at(i)->Draw(context, camera);
 	}
 

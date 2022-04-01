@@ -29,7 +29,7 @@ float4 main(VertexToPixel input) : SV_TARGET
 	float3 surfaceColor = SurfaceTexture.Sample(BasicSampler, input.uv).rgb;
 	surfaceColor *= colorTint;
 	float specularScale = SpecularTexture.Sample(BasicSampler, input.uv).r;
-
+	//return float4(specularScale, 0, 0, 1);
 	float3 negDirectionNormal = normalize(-lights[0].Direction);
 	float3 diffuse =  (Diffuse(input.normal, negDirectionNormal));
 	float light = Phong(input.normal, input.worldPosition, MAX_SPECULAR_EXPONENT, roughness, cameraPosition, -negDirectionNormal) * specularScale;

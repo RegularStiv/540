@@ -31,8 +31,6 @@ float Material::GetRoughness()
     return this->roughness;
 }
 
-
-
 void Material::SetPixelShader(std::shared_ptr<SimplePixelShader> pixelShader)
 {
     this->pixelShader = pixelShader;
@@ -58,8 +56,8 @@ void Material::AddSampler(std::string shaderName, Microsoft::WRL::ComPtr<ID3D11S
     samplers.insert({ shaderName, sampler });
 }
 
-void Material::PrepareMaterial(std::shared_ptr<SimplePixelShader> ps)
+void Material::PrepareMaterial()
 {
-    for (auto& t : textureSRVs) { ps->SetShaderResourceView(t.first.c_str(), t.second); }
-    for (auto& s : samplers) { ps->SetSamplerState(s.first.c_str(), s.second); }
+    for (auto& t : textureSRVs) { this->pixelShader->SetShaderResourceView(t.first.c_str(), t.second); }
+    for (auto& s : samplers) { this->pixelShader->SetSamplerState(s.first.c_str(), s.second); }
 }

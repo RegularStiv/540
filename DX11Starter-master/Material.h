@@ -15,7 +15,7 @@ public:
 	void SetColorTint(DirectX::XMFLOAT4 colorTint);
 	void AddTextureSRV(std::string shaderName, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srv);
 	void AddSampler(std::string shaderName, Microsoft::WRL::ComPtr<ID3D11SamplerState> sampler);
-	void PrepareMaterial(std::shared_ptr<SimplePixelShader> ps);
+	void PrepareMaterial();
 private:
 	std::shared_ptr<SimpleVertexShader> vertexShader;
 	std::shared_ptr<SimplePixelShader> pixelShader;
