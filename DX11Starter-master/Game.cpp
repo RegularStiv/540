@@ -79,15 +79,18 @@ void Game::Init()
 	device->CreateSamplerState(&sampDesc, sampler.GetAddressOf());
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> groundSRV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> groundSpecSRV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> brickSRV;
 
 	CreateWICTextureFromFile(device.Get(), context.Get(), GetFullPathTo_Wide(L"../../Assets/textures/ground-diffuse.jpg").c_str(), nullptr, groundSRV.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), GetFullPathTo_Wide(L"../../Assets/textures/ground-spec.jpg").c_str(), nullptr, groundSpecSRV.GetAddressOf());
 	CreateWICTextureFromFile(device.Get(), context.Get(), GetFullPathTo_Wide(L"../../Assets/textures/stone-brick-diffuse.jpg").c_str(), nullptr, brickSRV.GetAddressOf());
 
 	ambiant = XMFLOAT3(.1,.1,.25);
 	std::shared_ptr<Material> mat1 = std::make_shared<Material>(vertexShader, pixelShader, DirectX::XMFLOAT4(1, 1, 1, 1), .2);
-	mat1->AddTextureSRV("PixelShader",groundSRV);
-	mat1->AddSampler("PixelShader",sampler);
+	mat1->AddTextureSRV("SurfaceTexture",groundSRV); 
+	mat1->AddTextureSRV("SpecularTexture", groundSpecSRV);
+	mat1->AddSampler("BasicSampler",sampler);
 	mat1->PrepareMaterial(pixelShader);
 
 	materials.push_back(mat1);
