@@ -22,7 +22,7 @@ cbuffer ExternalData : register(b0)
 //    "put the output of this into the current render target"
 // - Named "main" because that's the default the shader compiler looks for
 // --------------------------------------------------------
-float4 main(VertexToPixel input) : SV_TARGET
+float4 main(VertexToPixel_NormalMap input) : SV_TARGET
 {
 
 	input.normal = normalize(input.normal);
@@ -30,6 +30,20 @@ float4 main(VertexToPixel input) : SV_TARGET
 	float3 surfaceColor = SurfaceTexture.Sample(BasicSampler, input.uv).rgb;
 	surfaceColor *= colorTint;
 	float specularScale = SpecularTexture.Sample(BasicSampler, input.uv).r;
+
+	float3 unpackedNormal = NormalTexture.Sample(BasicSampler, input.uv).rgb * 2 - 1;
+
+	// Feel free to adjust/simplify this code to fit with your existing shader(s)
+	// Simplifications include not re-normalizing the same vector more than once!
+	float3 N = normalize(input.normal); // Must be normalized here or before
+	float3 T = normalize(input.tangent); // Must be normalized here or before
+	T = normalize(T - N * dot(T, N)); // Gram-Schmidt assumes T&N are normalized!
+	float3 B = cross(T, N);
+	float3x3 TBN = float3x3(T, B, N);
+
+	// Assumes that input.normal is used later in the shader
+	input.normal = mul(unpackedNormal, TBN); // Note multiplication order!
+	return float4(input.normal, 1);
 	//return float4(specularScale, 0, 0, 1);
 	float3 negDirectionNormal = normalize(-lights[0].Direction);
 	float3 diffuse =  (Diffuse(input.normal, negDirectionNormal));
