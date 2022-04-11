@@ -22,6 +22,7 @@ struct VertexShaderInput
 	float3 localPosition	: POSITION;     // XYZ position
 	float3 normal			: NORMAL;
 	float2 uv				: TEXCOORD;
+	float3 tangent			: TANGENT;
 };
 struct Light {
 	int Type;
@@ -50,6 +51,19 @@ struct VertexToPixel
 	float3 worldPosition	: POSITION;
 	float2 uv				: TEXCOORD;
 
+};
+struct VertexToPixel_NormalMap
+{
+	// Data type
+	//  |
+	//  |   Name          Semantic
+	//  |    |                |
+	//  v    v                v
+	float4 screenPosition	: SV_POSITION;	// XYZW position (System Value Position)
+	float3 normal			: NORMAL;
+	float3 worldPosition	: POSITION;
+	float2 uv				: TEXCOORD;
+	float3 tangent			: TANGENT;
 };
 float3 Diffuse(float3 normal, float3 dirToLight) 
 {

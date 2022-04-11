@@ -17,7 +17,7 @@ cbuffer ExternalData : register(b0)
 VertexToPixel main( VertexShaderInput input )
 {
 	// Set up output struct
-	VertexToPixel output;
+	VertexToPixel_NormalMap output;
 
 	// Here we're essentially passing the input position directly through to the next
 	// stage (rasterizer), though it needs to be a 4-component vector now.  
@@ -31,6 +31,7 @@ VertexToPixel main( VertexShaderInput input )
 	output.screenPosition = mul(wvp, float4(input.localPosition, 1.0f));
 
 	output.uv = input.uv;
+	output.tangent = mul((float3x3)worldInvTranspose, input.tangent);
 	output.normal = mul((float3x3)worldInvTranspose, input.normal);
 
 	output.worldPosition = mul(world, float4(input.localPosition, 1)).xyz;
