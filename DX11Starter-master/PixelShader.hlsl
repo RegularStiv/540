@@ -42,8 +42,7 @@ float4 main(VertexToPixel_NormalMap input) : SV_TARGET
 	float3x3 TBN = float3x3(T, B, N);
 
 	// Assumes that input.normal is used later in the shader
-	input.normal = mul(unpackedNormal, TBN); // Note multiplication order!
-	return float4(input.normal, 1);
+	input.normal = normalize(mul(unpackedNormal, TBN)); // Note multiplication order!
 	//return float4(specularScale, 0, 0, 1);
 	float3 negDirectionNormal = normalize(-lights[0].Direction);
 	float3 diffuse =  (Diffuse(input.normal, negDirectionNormal));

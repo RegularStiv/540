@@ -193,10 +193,8 @@ void Transform::UpdateMatricies()
     DirectX::XMMATRIX world = (Scaling() * RotationRollPitchYaw() * Translation());
 
     DirectX::XMStoreFloat4x4(&worldMatrix, world);
-    DirectX::XMStoreFloat4x4(&worldInverseTranspose, 
-        XMMatrixInverse(0,DirectX::XMMatrixTranspose(world)));
-
-
+    DirectX::XMStoreFloat4x4(&worldInverseTranspose,
+        XMMatrixInverse(0, DirectX::XMMatrixTranspose(world)));
 }
 
 DirectX::XMMATRIX Transform::Translation()
