@@ -37,7 +37,7 @@ VertexToPixel_Sky main(VertexShaderInput input)
 	noTransform._14 = 0;
 	noTransform._24 = 0;
 	noTransform._34 = 0;
-	matrix viewProj = mul(noTransform, projection);
+	matrix viewProj = mul(projection, noTransform);
 
 	output.position = mul(viewProj, float4(input.position,1));
 
