@@ -1,12 +1,19 @@
 #pragma once
 #include <wrl/client.h>
+#include <d3d11.h>
+#include "Mesh.h"
+#include "SimpleShader.h"
+#include "WICTextureLoader.h"
+#include "Camera.h"
 #include <memory>
-#include "Game.h"
 class Sky
 {
 public:
-	Sky(std::shared_ptr<Mesh> mesh, Microsoft::WRL::ComPtr<ID3D11SamplerState> sampler, Microsoft::WRL::ComPtr<ID3D11Device> device);
+	Sky(std::shared_ptr<Mesh> mesh, std::shared_ptr<Camera> camera,Microsoft::WRL::ComPtr<ID3D11SamplerState> sampler, Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> cubeSRV, std::shared_ptr < SimpleVertexShader> skyVertexShader, std::shared_ptr < SimplePixelShader> skyPixelShader);
+	~Sky();
+	void Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context);
 private:
+	std::shared_ptr<Camera> camera;
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerOptions;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> cubeSRV;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> depthBufferComparison;

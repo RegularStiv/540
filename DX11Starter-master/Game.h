@@ -11,6 +11,7 @@
 #include "Material.h"
 #include "SimpleShader.h"
 #include "Lights.h"
+#include "Sky.h"
 
 class Game 
 	: public DXCore
@@ -26,7 +27,13 @@ public:
 	void OnResize();
 	void Update(float deltaTime, float totalTime);
 	void Draw(float deltaTime, float totalTime);
-
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> CreateCubemap(
+		const wchar_t* right,
+		const wchar_t* left,
+		const wchar_t* up,
+		const wchar_t* down,
+		const wchar_t* front,
+		const wchar_t* back);
 
 private:
 
@@ -50,7 +57,9 @@ private:
 	std::shared_ptr<SimplePixelShader> pixelShader;
 	std::shared_ptr<SimpleVertexShader> vertexShader;
 	std::shared_ptr<SimplePixelShader> customPixelShader;
-
+	std::shared_ptr<SimpleVertexShader> skyVertexShader;
+	std::shared_ptr<SimplePixelShader> skyPixelShader;
+	std::shared_ptr<Sky> sky;
 	std::shared_ptr<Mesh> triangle;
 	std::shared_ptr<Mesh> rect;
 	std::shared_ptr<Mesh> pentagon;

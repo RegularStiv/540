@@ -15,7 +15,7 @@ struct VertexToPixel_Sky
 
 
 
-float4 main(VertexToPixel_Sky input)
+float4 main(VertexToPixel_Sky input) : SV_TARGET
 {
 	return CubeTexture.Sample(BasicSampler, input.sampleDir);
 }

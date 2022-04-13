@@ -33,11 +33,13 @@ struct VertexShaderInput
 VertexToPixel_Sky main(VertexShaderInput input)
 {
 	VertexToPixel_Sky output;
-	view._14 = 0;
-	view._24 = 0;
-	view._34 = 0;
+	matrix noTransform = view;
+	noTransform._14 = 0;
+	noTransform._24 = 0;
+	noTransform._34 = 0;
+	matrix viewProj = mul(noTransform, projection);
 
-	output.position = mul(mul(view, projection), float4(input.position,1));
+	output.position = mul(viewProj, float4(input.position,1));
 
 	output.position.z = output.position.w;
 
