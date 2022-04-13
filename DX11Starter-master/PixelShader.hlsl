@@ -26,10 +26,8 @@ float4 main(VertexToPixel_NormalMap input) : SV_TARGET
 {
 
 	input.normal = normalize(input.normal);
-	// Adjust the variables below as necessary to work with your own code
-	float3 surfaceColor = SurfaceTexture.Sample(BasicSampler, input.uv).rgb;
-	surfaceColor *= colorTint;
-	float specularScale = SpecularTexture.Sample(BasicSampler, input.uv).r;
+//input.tangent = normalize(input.tangent);
+	
 
 	float3 unpackedNormal = NormalTexture.Sample(BasicSampler, input.uv).rgb * 2 - 1;
 
@@ -43,6 +41,11 @@ float4 main(VertexToPixel_NormalMap input) : SV_TARGET
 
 	// Assumes that input.normal is used later in the shader
 	input.normal = normalize(mul(unpackedNormal, TBN)); // Note multiplication order!
+	//return float4(input.normal, 1);
+	// Adjust the variables below as necessary to work with your own code
+	float3 surfaceColor = SurfaceTexture.Sample(BasicSampler, input.uv).rgb;
+	surfaceColor *= colorTint;
+	float specularScale = SpecularTexture.Sample(BasicSampler, input.uv).r;
 	//return float4(specularScale, 0, 0, 1);
 	float3 negDirectionNormal = normalize(-lights[0].Direction);
 	float3 diffuse =  (Diffuse(input.normal, negDirectionNormal));
