@@ -81,29 +81,34 @@ void Game::Init()
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> groundSRV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> groundSpecSRV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> groundNormalSRV;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> brickSpecSRV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> brickMetalSRV; 
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> brickRoughnessSRV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> brickSRV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> brickNormalSRV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> rockSRV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> rockNormalSRV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> cushionSRV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> cushionNormalSRV;
-
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> bronzeMetalSRV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> bronzeRoughnessSRV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> bronzeSRV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> bronzeNormalSRV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> skySRV;
 
 	CreateWICTextureFromFile(device.Get(), context.Get(), GetFullPathTo_Wide(L"../../Assets/textures/ground-diffuse.jpg").c_str(), nullptr, groundSRV.GetAddressOf());
 	CreateWICTextureFromFile(device.Get(), context.Get(), GetFullPathTo_Wide(L"../../Assets/textures/ground-spec2.png").c_str(), nullptr, groundSpecSRV.GetAddressOf());
 	CreateWICTextureFromFile(device.Get(), context.Get(), GetFullPathTo_Wide(L"../../Assets/textures/ground-normal.png").c_str(), nullptr, groundNormalSRV.GetAddressOf());
 
-	CreateWICTextureFromFile(device.Get(), context.Get(), GetFullPathTo_Wide(L"../../Assets/textures/stone-brick-diffuse.jpg").c_str(), nullptr, brickSRV.GetAddressOf());
-	CreateWICTextureFromFile(device.Get(), context.Get(), GetFullPathTo_Wide(L"../../Assets/textures/stone-brick-spec1.png").c_str(), nullptr, brickSpecSRV.GetAddressOf());
-	CreateWICTextureFromFile(device.Get(), context.Get(), GetFullPathTo_Wide(L"../../Assets/textures/stone_brick_normal.png").c_str(), nullptr, brickNormalSRV.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), GetFullPathTo_Wide(L"../../Assets/textures/cobblestone_albedo.png").c_str(), nullptr, brickSRV.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), GetFullPathTo_Wide(L"../../Assets/textures/cobblestone_metal.png").c_str(), nullptr, brickMetalSRV.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), GetFullPathTo_Wide(L"../../Assets/textures/cobblestone_roughness.png").c_str(), nullptr, brickRoughnessSRV.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), GetFullPathTo_Wide(L"../../Assets/textures/cobblestone_normals.png").c_str(), nullptr, brickNormalSRV.GetAddressOf());
 
-	CreateWICTextureFromFile(device.Get(), context.Get(), GetFullPathTo_Wide(L"../../Assets/textures/cushion.png").c_str(), nullptr, cushionSRV.GetAddressOf());
-	CreateWICTextureFromFile(device.Get(), context.Get(), GetFullPathTo_Wide(L"../../Assets/textures/cushion_normals.png").c_str(), nullptr, cushionNormalSRV.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), GetFullPathTo_Wide(L"../../Assets/textures/bronze_albedo.png").c_str(), nullptr, bronzeSRV.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), GetFullPathTo_Wide(L"../../Assets/textures/bronze_metal.png").c_str(), nullptr, bronzeMetalSRV.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), GetFullPathTo_Wide(L"../../Assets/textures/bronze_roughness.png").c_str(), nullptr, bronzeRoughnessSRV.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), GetFullPathTo_Wide(L"../../Assets/textures/bronze_normals.png").c_str(), nullptr, bronzeNormalSRV.GetAddressOf());
 
-	CreateWICTextureFromFile(device.Get(), context.Get(), GetFullPathTo_Wide(L"../../Assets/textures/rock.png").c_str(), nullptr, rockSRV.GetAddressOf());
-	CreateWICTextureFromFile(device.Get(), context.Get(), GetFullPathTo_Wide(L"../../Assets/textures/rock_normals.png").c_str(), nullptr, rockNormalSRV.GetAddressOf());
 	skySRV = CreateCubemap(GetFullPathTo_Wide(L"../../Assets/textures/right.png").c_str(), GetFullPathTo_Wide(L"../../Assets/textures/left.png").c_str(), GetFullPathTo_Wide(L"../../Assets/textures/up.png").c_str(), GetFullPathTo_Wide(L"../../Assets/textures/down.png").c_str(), GetFullPathTo_Wide(L"../../Assets/textures/front.png").c_str(), GetFullPathTo_Wide(L"../../Assets/textures/back.png").c_str());
 
 
@@ -112,6 +117,7 @@ void Game::Init()
 	std::shared_ptr<Material> mat2 = std::make_shared<Material>(vertexShader, pixelShader, DirectX::XMFLOAT4(1, 1, 1, 1), .2);
 	std::shared_ptr<Material> mat3 = std::make_shared<Material>(vertexShader, pixelShader, DirectX::XMFLOAT4(1, 1, 1, 1), .2);
 	std::shared_ptr<Material> mat4 = std::make_shared<Material>(vertexShader, pixelShader, DirectX::XMFLOAT4(1, 1, 1, 1), .2);
+	std::shared_ptr<Material> mat5 = std::make_shared<Material>(vertexShader, pixelShader, DirectX::XMFLOAT4(1, 1, 1, 1), .2);
 	mat1->AddTextureSRV("SurfaceTexture",groundSRV); 
 	mat1->AddTextureSRV("SpecularTexture", groundSpecSRV);
 	mat1->AddTextureSRV("NormalTexture", groundNormalSRV);
@@ -120,8 +126,9 @@ void Game::Init()
 	materials.push_back(mat1);
 	
 	mat2->AddTextureSRV("SurfaceTexture", brickSRV);
-	mat2->AddTextureSRV("SpecularTexture", brickSpecSRV);
+	mat2->AddTextureSRV("MetalTexture", brickMetalSRV);
 	mat2->AddTextureSRV("NormalTexture", brickNormalSRV);
+	mat2->AddTextureSRV("RoughnessTexture", brickRoughnessSRV);
 	mat2->AddSampler("BasicSampler", sampler);
 	
 	materials.push_back(mat2);
@@ -136,6 +143,14 @@ void Game::Init()
 	mat4->AddSampler("BasicSampler", sampler);
 	materials.push_back(mat4);
 	
+	mat5->AddTextureSRV("SurfaceTexture", bronzeSRV);
+	mat5->AddTextureSRV("MetalTexture", bronzeMetalSRV);
+	mat5->AddTextureSRV("NormalTexture", bronzeNormalSRV);
+	mat5->AddTextureSRV("RoughnessTexture", bronzeRoughnessSRV);
+	mat5->AddSampler("BasicSampler", sampler);
+
+	materials.push_back(mat5);
+
 	Light light = {};
 	light.Type = LIGHT_TYPE_DIRECTIONAL;
 	light.Direction = XMFLOAT3(1, 0, 0);
@@ -214,13 +229,13 @@ void Game::LoadShaders()
 // --------------------------------------------------------
 void Game::CreateBasicGeometry()
 {
-	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/sphere.obj").c_str(), device, context), materials[2]));
-	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/cube.obj").c_str(), device, context), materials[3]));
-	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/cylinder.obj").c_str(), device, context), materials[2]));
-	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/helix.obj").c_str(), device, context), materials[3]));
-	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/quad.obj").c_str(), device, context), materials[2]));
-	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/quad_double_sided.obj").c_str(), device, context), materials[3]));
-	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/torus.obj").c_str(), device, context), materials[2]));
+	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/sphere.obj").c_str(), device, context), materials[1]));
+	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/cube.obj").c_str(), device, context), materials[4]));
+	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/cylinder.obj").c_str(), device, context), materials[1]));
+	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/helix.obj").c_str(), device, context), materials[4]));
+	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/quad.obj").c_str(), device, context), materials[1]));
+	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/quad_double_sided.obj").c_str(), device, context), materials[4]));
+	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/torus.obj").c_str(), device, context), materials[1]));
 }
 
 
