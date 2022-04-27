@@ -173,6 +173,7 @@ void Game::Init()
 	mat6->AddTextureSRV("SurfaceTexture", brickSRV);
 	mat6->AddTextureSRV("NormalTexture", brickNormalSRV);
 	mat6->AddTextureSRV("CelTexture", celFourBandTexture);
+	mat7->AddTextureSRV("MetalTexture", brickMetalSRV);
 	mat6->AddTextureSRV("CelSpecularTexture", celSpecTexture);
 	mat6->AddTextureSRV("RoughnessTexture", brickRoughnessSRV);
 	mat6->AddSampler("BasicSampler", sampler);
@@ -180,11 +181,12 @@ void Game::Init()
 
 	materials.push_back(mat6);
 
-	mat7->AddTextureSRV("SurfaceTexture", brickSRV);
-	mat7->AddTextureSRV("NormalTexture", brickNormalSRV);
+	mat7->AddTextureSRV("SurfaceTexture", bronzeSRV);
+	mat7->AddTextureSRV("NormalTexture", bronzeNormalSRV);
+	mat7->AddTextureSRV("MetalTexture", bronzeMetalSRV);
 	mat7->AddTextureSRV("CelTexture", celTwoBandTexture);
 	mat7->AddTextureSRV("CelSpecularTexture", celSpecTexture);
-	mat7->AddTextureSRV("RoughnessTexture", brickRoughnessSRV);
+	mat7->AddTextureSRV("RoughnessTexture", bronzeRoughnessSRV);
 	mat7->AddSampler("BasicSampler", sampler);
 	mat7->AddSampler("CelSampler", celSampler);
 
@@ -271,12 +273,13 @@ void Game::LoadShaders()
 void Game::CreateBasicGeometry()
 {
 	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/sphere.obj").c_str(), device, context), materials[5]));
-	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/cube.obj").c_str(), device, context), materials[6]));
+	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/cube.obj").c_str(), device, context), materials[4]));
 	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/cylinder.obj").c_str(), device, context), materials[5]));
 	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/helix.obj").c_str(), device, context), materials[6]));
 	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/quad.obj").c_str(), device, context), materials[1]));
 	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/quad_double_sided.obj").c_str(), device, context), materials[4]));
 	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/torus.obj").c_str(), device, context), materials[1]));
+	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/crate_wood.obj").c_str(), device, context), materials[6]));
 }
 
 

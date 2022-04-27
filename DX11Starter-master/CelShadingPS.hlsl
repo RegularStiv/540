@@ -5,6 +5,7 @@ Texture2D CelSpecularTexture:		register(t1);
 Texture2D CelTexture		:		register(t2);// "t" registers for textures
 Texture2D NormalTexture		:		register(t3);
 Texture2D RoughnessTexture	:		register(t4);
+Texture2D MetalTexture		:		register(t5);
 SamplerState BasicSampler	:		register(s0); // "s" registers for samplers
 SamplerState CelSampler		:		register(s1);
 
@@ -35,9 +36,11 @@ float4 main(VertexToPixel_NormalMap input) : SV_TARGET
 	// Adjust the variables below as necessary to work with your own code
 	float4 surfaceColor = pow(SurfaceTexture.Sample(BasicSampler, input.uv), 2.2f);
 	surfaceColor.rgb *= colorTint;
-
-
+	float metalness = MetalTexture.Sample(BasicSampler, input.uv).r;
 	float roughness = RoughnessTexture.Sample(BasicSampler, input.uv).r;
+	float3 specularColor = lerp(F0_NON_METAL.rrr, surfaceColor.rgb, metalness);
+
+	
 
 
 	float3 finalLight = ambient * surfaceColor.rgb;
@@ -57,14 +60,16 @@ float4 main(VertexToPixel_NormalMap input) : SV_TARGET
 			negDirectionNormal = normalize(currentLight.Position - input.worldPosition);
 			attenuate = Attenuate(currentLight, input.worldPosition);
 		}
-		float diffuse = (Diffuse(input.normal, negDirectionNormal));
-		float phongLight = Phong(input.normal, input.worldPosition, MAX_SPECULAR_EXPONENT, roughness, cameraPosition, -negDirectionNormal);
+		float diffuse = (DiffusePBR(input.normal, negDirectionNormal));
+		float spec = MicrofacetBRDF(input.normal, negDirectionNormal, normalize(cameraPosition - input.worldPosition), roughness, specularColor);
 		
-			diffuse = CelTexture.Sample(CelSampler, float2(diffuse, 0)).r;
+		diffuse = CelTexture.Sample(CelSampler, float2(diffuse, 0)).r;
 
-			phongLight = CelSpecularTexture.Sample(CelSampler, float2(phongLight, 0)).r;
-		finalLight += (diffuse * surfaceColor.rgb + phongLight) * attenuate * currentLight.Intensity * currentLight.Color;
+		float3 balancedDiff = DiffuseEnergyConserve(diffuse, spec, metalness);
+
+		finalLight += (balancedDiff * surfaceColor.rgb + spec) * attenuate * currentLight.Intensity * currentLight.Color;
 	}
+
 
 	
 	//return all lights with gamma correction
