@@ -28,7 +28,6 @@ float4 main(VertexToPixel_NormalMap input) : SV_TARGET
 {
 
 	input.normal = normalize(input.normal);
-//input.tangent = normalize(input.tangent);
 	
 
 	float3 unpackedNormal = NormalTexture.Sample(BasicSampler, input.uv).rgb * 2 - 1;

@@ -109,10 +109,15 @@
     <FxCompile Include="SkyPS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="CelShadingPS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ShaderIncludes.hlsli" />
     <None Include="packages.config" />
+    <None Include="ShaderIncludes.hlsli">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="textures\ground-diffuse.jpg">

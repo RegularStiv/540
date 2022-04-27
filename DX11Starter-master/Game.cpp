@@ -77,6 +77,11 @@ void Game::Init()
 	sampDesc.MaxAnisotropy = 16;
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
 	device->CreateSamplerState(&sampDesc, sampler.GetAddressOf());
+	
+	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+	device->CreateSamplerState(&sampDesc, celSampler.GetAddressOf());
 
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> groundSRV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> groundSpecSRV;
@@ -95,6 +100,11 @@ void Game::Init()
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> bronzeNormalSRV;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> skySRV;
 
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> celFourBandTexture;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> celTwoBandTexture;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> celSpecTexture;
+
+
 	CreateWICTextureFromFile(device.Get(), context.Get(), GetFullPathTo_Wide(L"../../Assets/textures/ground-diffuse.jpg").c_str(), nullptr, groundSRV.GetAddressOf());
 	CreateWICTextureFromFile(device.Get(), context.Get(), GetFullPathTo_Wide(L"../../Assets/textures/ground-spec2.png").c_str(), nullptr, groundSpecSRV.GetAddressOf());
 	CreateWICTextureFromFile(device.Get(), context.Get(), GetFullPathTo_Wide(L"../../Assets/textures/ground-normal.png").c_str(), nullptr, groundNormalSRV.GetAddressOf());
@@ -109,6 +119,12 @@ void Game::Init()
 	CreateWICTextureFromFile(device.Get(), context.Get(), GetFullPathTo_Wide(L"../../Assets/textures/bronze_roughness.png").c_str(), nullptr, bronzeRoughnessSRV.GetAddressOf());
 	CreateWICTextureFromFile(device.Get(), context.Get(), GetFullPathTo_Wide(L"../../Assets/textures/bronze_normals.png").c_str(), nullptr, bronzeNormalSRV.GetAddressOf());
 
+
+	CreateWICTextureFromFile(device.Get(), context.Get(), GetFullPathTo_Wide(L"../../Assets/textures/toonRamp1.png").c_str(), nullptr, celFourBandTexture.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), GetFullPathTo_Wide(L"../../Assets/textures/toonRamp3.png").c_str(), nullptr, celTwoBandTexture.GetAddressOf());
+	CreateWICTextureFromFile(device.Get(), context.Get(), GetFullPathTo_Wide(L"../../Assets/textures/toonRampSpecular.png").c_str(), nullptr, celSpecTexture.GetAddressOf());
+
+
 	skySRV = CreateCubemap(GetFullPathTo_Wide(L"../../Assets/textures/right.png").c_str(), GetFullPathTo_Wide(L"../../Assets/textures/left.png").c_str(), GetFullPathTo_Wide(L"../../Assets/textures/up.png").c_str(), GetFullPathTo_Wide(L"../../Assets/textures/down.png").c_str(), GetFullPathTo_Wide(L"../../Assets/textures/front.png").c_str(), GetFullPathTo_Wide(L"../../Assets/textures/back.png").c_str());
 
 
@@ -118,7 +134,10 @@ void Game::Init()
 	std::shared_ptr<Material> mat3 = std::make_shared<Material>(vertexShader, pixelShader, DirectX::XMFLOAT4(1, 1, 1, 1), .2);
 	std::shared_ptr<Material> mat4 = std::make_shared<Material>(vertexShader, pixelShader, DirectX::XMFLOAT4(1, 1, 1, 1), .2);
 	std::shared_ptr<Material> mat5 = std::make_shared<Material>(vertexShader, pixelShader, DirectX::XMFLOAT4(1, 1, 1, 1), .2);
-	mat1->AddTextureSRV("SurfaceTexture",groundSRV); 
+	std::shared_ptr<Material> mat6 = std::make_shared<Material>(vertexShader, celShader, DirectX::XMFLOAT4(1, 1, 1, 1), .2);
+	std::shared_ptr<Material> mat7 = std::make_shared<Material>(vertexShader, celShader, DirectX::XMFLOAT4(1, 1, 1, 1), .2);
+
+
 	mat1->AddTextureSRV("SpecularTexture", groundSpecSRV);
 	mat1->AddTextureSRV("NormalTexture", groundNormalSRV);
 	mat1->AddSampler("BasicSampler",sampler);
@@ -151,13 +170,33 @@ void Game::Init()
 
 	materials.push_back(mat5);
 
+	mat6->AddTextureSRV("SurfaceTexture", brickSRV);
+	mat6->AddTextureSRV("NormalTexture", brickNormalSRV);
+	mat6->AddTextureSRV("CelTexture", celFourBandTexture);
+	mat6->AddTextureSRV("CelSpecularTexture", celSpecTexture);
+	mat6->AddTextureSRV("RoughnessTexture", brickRoughnessSRV);
+	mat6->AddSampler("BasicSampler", sampler);
+	mat6->AddSampler("CelSampler", celSampler);
+
+	materials.push_back(mat6);
+
+	mat7->AddTextureSRV("SurfaceTexture", brickSRV);
+	mat7->AddTextureSRV("NormalTexture", brickNormalSRV);
+	mat7->AddTextureSRV("CelTexture", celTwoBandTexture);
+	mat7->AddTextureSRV("CelSpecularTexture", celSpecTexture);
+	mat7->AddTextureSRV("RoughnessTexture", brickRoughnessSRV);
+	mat7->AddSampler("BasicSampler", sampler);
+	mat7->AddSampler("CelSampler", celSampler);
+
+	materials.push_back(mat7);
+
 	Light light = {};
 	light.Type = LIGHT_TYPE_DIRECTIONAL;
-	light.Direction = XMFLOAT3(1, 0, 0);
-	light.Color = XMFLOAT3(1, 0, 0);
+	light.Direction = XMFLOAT3(1, -1, 1);
+	light.Color = XMFLOAT3(1, 1, 1);
 	light.Intensity = 1;
 	lights.push_back(light);
-	light = {};
+	/*light = {};
 	light.Type = LIGHT_TYPE_DIRECTIONAL;
 	light.Direction = XMFLOAT3(0, 0, 1);
 	light.Color = XMFLOAT3(0, 0, 1);
@@ -182,7 +221,7 @@ void Game::Init()
 	light.Range = 10;
 	light.Color = XMFLOAT3(1, 1, 1);
 	light.Intensity = 1;
-	lights.push_back(light);
+	lights.push_back(light);*/
 	CreateBasicGeometry();
 	
 	
@@ -214,6 +253,8 @@ void Game::LoadShaders()
 
 	pixelShader = std::make_shared<SimplePixelShader>(device, context,
 		GetFullPathTo_Wide(L"PixelShader.cso").c_str());
+	celShader = std::make_shared<SimplePixelShader>(device, context,
+		GetFullPathTo_Wide(L"CelShadingPS.cso").c_str());
 	customPixelShader = std::make_shared<SimplePixelShader>(device, context,
 		GetFullPathTo_Wide(L"CustomPS.cso").c_str());
 	skyPixelShader = std::make_shared<SimplePixelShader>(device,context, 
@@ -229,10 +270,10 @@ void Game::LoadShaders()
 // --------------------------------------------------------
 void Game::CreateBasicGeometry()
 {
-	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/sphere.obj").c_str(), device, context), materials[1]));
-	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/cube.obj").c_str(), device, context), materials[4]));
-	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/cylinder.obj").c_str(), device, context), materials[1]));
-	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/helix.obj").c_str(), device, context), materials[4]));
+	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/sphere.obj").c_str(), device, context), materials[5]));
+	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/cube.obj").c_str(), device, context), materials[6]));
+	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/cylinder.obj").c_str(), device, context), materials[5]));
+	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/helix.obj").c_str(), device, context), materials[6]));
 	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/quad.obj").c_str(), device, context), materials[1]));
 	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/quad_double_sided.obj").c_str(), device, context), materials[4]));
 	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/torus.obj").c_str(), device, context), materials[1]));
@@ -294,15 +335,18 @@ void Game::Draw(float deltaTime, float totalTime)
 		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
 		1.0f,
 		0);
-	
 
 	//draws each entity meshes
 	for (int i = 0; i < entities.size(); i++)
 	{
 		pixelShader->SetData("lights", &lights[0], sizeof(Light) * (int)lights.size());
+		celShader->SetData("lights", &lights[0], sizeof(Light) * (int)lights.size());
 		entities.at(i)->GetMaterial()->GetPixelShader()->SetFloat3("ambient", ambiant);
 		entities.at(i)->GetMaterial()->GetPixelShader()->SetFloat("roughness", entities.at(i)->GetMaterial()->GetRoughness());
 		entities.at(i)->GetMaterial()->GetPixelShader()->SetFloat3("cameraPosition", camera->GetTransform()->GetPosition());
+		if (entities.at(i)->GetMaterial()->GetPixelShader() == celShader) {
+			entities.at(i)->GetMaterial()->GetPixelShader()->SetInt("celShadingType",1);
+		}
 		entities.at(i)->GetMaterial()->PrepareMaterial();
 		entities.at(i)->Draw(context, camera);
 	}

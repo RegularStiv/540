@@ -184,5 +184,18 @@ float random(float2 s)
 {
 	return frac(sin(dot(s, float2(12.9898, 78.233))) * 43758.5453123);
 }
+float3 NormalMapping(Texture2D map, SamplerState samp, float2 uv, float3 normal, float3 tangent)
+{
+	float3 unpackedNormal = map.Sample(samp, uv).rgb * 2 - 1;
+	// Feel free to adjust/simplify this code to fit with your existing shader(s)
+	// Simplifications include not re-normalizing the same vector more than once!
+	float3 N = normalize(normal); // Must be normalized here or before
+	float3 T = normalize(tangent); // Must be normalized here or before
+	T = normalize(T - N * dot(T, N)); // Gram-Schmidt assumes T&N are normalized!
+	float3 B = cross(T, N);
+	float3x3 TBN = float3x3(T, B, N);
 
+	// Assumes that input.normal is used later in the shader
+	return normalize(mul(unpackedNormal, TBN)); // Note multiplication order!
+}
 #endif
