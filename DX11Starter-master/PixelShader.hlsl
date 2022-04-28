@@ -46,7 +46,6 @@ float4 main(VertexToPixel_NormalMap input) : SV_TARGET
 	// Adjust the variables below as necessary to work with your own code
 	float3 surfaceColor = pow(SurfaceTexture.Sample(BasicSampler, input.uv).rgb, 2.2f);
 	surfaceColor *= colorTint;
-	float specularScale = SpecularTexture.Sample(BasicSampler, input.uv).r;
 
 	float roughness = RoughnessTexture.Sample(BasicSampler, input.uv).r;
 	float metalness = MetalTexture.Sample(BasicSampler, input.uv).r;
@@ -56,7 +55,6 @@ float4 main(VertexToPixel_NormalMap input) : SV_TARGET
 // Note the use of lerp here - metal is generally 0 or 1, but might be in between
 // because of linear texture sampling, so we lerp the specular color to match
 	float3 specularColor = lerp(F0_NON_METAL.rrr, surfaceColor.rgb, metalness);
-
 
 
 	//directional lights

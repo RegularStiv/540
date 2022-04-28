@@ -60,7 +60,6 @@ private:
 	std::shared_ptr<SimpleVertexShader> skyVertexShader;
 	std::shared_ptr<SimplePixelShader> skyPixelShader;
 	std::shared_ptr<SimplePixelShader> celShader;
-	Microsoft::WRL::ComPtr<ID3D11SamplerState> celSampler;
 	std::shared_ptr<Sky> sky;
 	std::shared_ptr<Mesh> triangle;
 	std::shared_ptr<Mesh> rect;

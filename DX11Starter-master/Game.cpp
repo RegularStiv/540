@@ -68,6 +68,7 @@ void Game::Init()
 	//  - You'll be expanding and/or replacing these later
 	LoadShaders();
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> sampler;
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> celSampler;
 	D3D11_SAMPLER_DESC sampDesc = {};
 
 	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -173,7 +174,7 @@ void Game::Init()
 	mat6->AddTextureSRV("SurfaceTexture", brickSRV);
 	mat6->AddTextureSRV("NormalTexture", brickNormalSRV);
 	mat6->AddTextureSRV("CelTexture", celFourBandTexture);
-	mat7->AddTextureSRV("MetalTexture", brickMetalSRV);
+	mat6->AddTextureSRV("MetalMap", brickMetalSRV);
 	mat6->AddTextureSRV("CelSpecularTexture", celSpecTexture);
 	mat6->AddTextureSRV("RoughnessTexture", brickRoughnessSRV);
 	mat6->AddSampler("BasicSampler", sampler);
@@ -183,7 +184,7 @@ void Game::Init()
 
 	mat7->AddTextureSRV("SurfaceTexture", bronzeSRV);
 	mat7->AddTextureSRV("NormalTexture", bronzeNormalSRV);
-	mat7->AddTextureSRV("MetalTexture", bronzeMetalSRV);
+	mat7->AddTextureSRV("MetalMap", bronzeMetalSRV);
 	mat7->AddTextureSRV("CelTexture", celTwoBandTexture);
 	mat7->AddTextureSRV("CelSpecularTexture", celSpecTexture);
 	mat7->AddTextureSRV("RoughnessTexture", bronzeRoughnessSRV);
@@ -272,10 +273,10 @@ void Game::LoadShaders()
 // --------------------------------------------------------
 void Game::CreateBasicGeometry()
 {
-	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/sphere.obj").c_str(), device, context), materials[5]));
-	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/cube.obj").c_str(), device, context), materials[4]));
-	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/cylinder.obj").c_str(), device, context), materials[5]));
-	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/helix.obj").c_str(), device, context), materials[6]));
+	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/sphere.obj").c_str(), device, context), materials[6]));
+	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/cube.obj").c_str(), device, context), materials[5]));
+	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/cylinder.obj").c_str(), device, context), materials[6]));
+	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/helix.obj").c_str(), device, context), materials[5]));
 	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/quad.obj").c_str(), device, context), materials[1]));
 	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/quad_double_sided.obj").c_str(), device, context), materials[4]));
 	entities.push_back(std::make_shared<GameEntity>(std::make_shared<Mesh>(GetFullPathTo("../../Assets/Models/torus.obj").c_str(), device, context), materials[1]));
@@ -347,9 +348,7 @@ void Game::Draw(float deltaTime, float totalTime)
 		entities.at(i)->GetMaterial()->GetPixelShader()->SetFloat3("ambient", ambiant);
 		entities.at(i)->GetMaterial()->GetPixelShader()->SetFloat("roughness", entities.at(i)->GetMaterial()->GetRoughness());
 		entities.at(i)->GetMaterial()->GetPixelShader()->SetFloat3("cameraPosition", camera->GetTransform()->GetPosition());
-		if (entities.at(i)->GetMaterial()->GetPixelShader() == celShader) {
-			entities.at(i)->GetMaterial()->GetPixelShader()->SetInt("celShadingType",1);
-		}
+
 		entities.at(i)->GetMaterial()->PrepareMaterial();
 		entities.at(i)->Draw(context, camera);
 	}
