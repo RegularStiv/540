@@ -5,3 +5,5 @@ This project was specifically made for me to learn how DirectX 11 and HLSL. This
 The starter code was created by Chris Cascioli
 
 Go to this link https://github.com/vixorien/DX11Starter for the original starter code
+
+This code also utilizes Simple Shader to load the various vertex and pixel shaders find that here https://github.com/vixorien/SimpleShader
