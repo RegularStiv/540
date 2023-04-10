@@ -1,4 +1,5 @@
 #include "Camera.h"
+using namespace DirectX;
 
 Camera::Camera(float fov, float x, float y, float z, float aspectRatio)
 {
@@ -38,14 +39,17 @@ void Camera::Update(float dt)
 
 void Camera::UpdateViewMatrix()
 {
-    DirectX::XMFLOAT3 pos = transform.GetPosition();
+    // Get the camera's forward vector and position
+    XMFLOAT3 forward = transform.GetForward();
+    XMFLOAT3 pos = transform.GetPosition();
 
-    DirectX::XMVECTOR forward = DirectX::XMLoadFloat3(&transform.forward);
-
-    DirectX::XMMATRIX view = DirectX::XMMatrixLookToLH(DirectX::XMLoadFloat3(&pos),forward, DirectX::XMLoadFloat3(&transform.up));
-    DirectX::XMStoreFloat4x4(&viewMatrix, view);
+    // Make the view matrix and save
+    XMMATRIX view = XMMatrixLookToLH(
+        XMLoadFloat3(&pos),
+        XMLoadFloat3(&forward),
+        XMVectorSet(0, 1, 0, 0)); // World up axis
+    XMStoreFloat4x4(&viewMatrix, view);
 }
-
 void Camera::UpdateProjectionMatrix(float fov, float aspectRatio, float nearPlane, float farPlane)
 {
     DirectX::XMMATRIX proj = DirectX::XMMatrixPerspectiveFovLH(

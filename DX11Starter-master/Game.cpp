@@ -199,7 +199,7 @@ void Game::Init()
 	light.Color = XMFLOAT3(1, 1, 1);
 	light.Intensity = 1;
 	lights.push_back(light);
-	/*light = {};
+	light = {};
 	light.Type = LIGHT_TYPE_DIRECTIONAL;
 	light.Direction = XMFLOAT3(0, 0, 1);
 	light.Color = XMFLOAT3(0, 0, 1);
@@ -224,7 +224,7 @@ void Game::Init()
 	light.Range = 10;
 	light.Color = XMFLOAT3(1, 1, 1);
 	light.Intensity = 1;
-	lights.push_back(light);*/
+	lights.push_back(light);
 	CreateBasicGeometry();
 	
 	
